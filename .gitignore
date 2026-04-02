@@ -1,0 +1,18 @@
+# MySQL data (Docker)
+docker/mysql/data/
+
+# Laravel の機密情報を追加
+src/.env
+src/.env.testing
+
+# その他 Laravel の不要なファイル
+src/vendor/
+src/node_modules/
+src/storage/*.key
+src/public/storage
+src/public/hot
+src/.phpunit.result.cache
+
+# エディタ設定
+.vscode/
+.idea/
