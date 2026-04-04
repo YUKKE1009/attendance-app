@@ -6,12 +6,14 @@
 
 @section('content')
 <div class="attendance__container">
-    {{-- ステータスバッジ（勤務外） --}}
+    {{-- 1. ステータスバッジ --}}
     <div class="attendance__status">
-        <span class="attendance__status-badge">勤務外</span>
+        <span class="attendance__status-badge">
+            {{ !$attendance ? '勤務外' : $attendance->status }}
+        </span>
     </div>
 
-    {{-- 日時表示エリア --}}
+    {{-- 2. 日時表示エリア --}}
     <div class="attendance__header">
         <p class="attendance__date">
             {{ date('Y年n月j日') }}({{ ['日','月','火','水','木','金','土'][date('w')] }})
@@ -21,13 +23,37 @@
         </p>
     </div>
 
-    {{-- 打刻ボタンエリア --}}
+    {{-- 3. 打刻ボタンエリア --}}
     <div class="attendance__button-group">
-        {{-- 出勤前：黒い「出勤」ボタンのみを表示 --}}
-        <form action="/attendance/clock-in" method="post" class="attendance__form">
+        @if(!$attendance)
+        {{-- 【勤務外】 --}}
+        <form action="/attendance/clock-in" method="post">
             @csrf
             <button type="submit" class="attendance__button attendance__button--black">出勤</button>
         </form>
+
+        @elseif($attendance->status === '出勤中')
+        {{-- 【出勤中】 --}}
+        <form action="/attendance/clock-out" method="post">
+            @csrf
+            <button type="submit" class="attendance__button attendance__button--black">退勤</button>
+        </form>
+        <form action="/attendance/break-in" method="post">
+            @csrf
+            <button type="submit" class="attendance__button attendance__button--white">休憩入</button>
+        </form>
+
+        @elseif($attendance->status === '休憩中')
+        {{-- 【休憩中】 --}}
+        <form action="/attendance/break-out" method="post">
+            @csrf
+            <button type="submit" class="attendance__button attendance__button--white">休憩戻</button>
+        </form>
+
+        @elseif($attendance->status === '退勤済')
+        {{-- 【退勤済】 --}}
+        <p class="attendance__thanks">お疲れ様でした。</p>
+        @endif
     </div>
 </div>
 
@@ -43,6 +69,6 @@
         }
     }
     setInterval(updateTime, 1000);
-    updateTime(); // 初回実行
+    updateTime();
 </script>
 @endsection

@@ -19,10 +19,8 @@ class CreateAttendancesTable extends Migration
             $table->date('date');
             $table->time('clock_in');
             $table->time('clock_out')->nullable();
-            $table->enum('status', ['working', 'finished']);
-            // working：勤務中 / finished：退勤済
+            $table->string('status', 20)->comment('勤務状態');
             $table->timestamps();
-
             $table->unique(['user_id', 'date']);
         });
     }

@@ -16,4 +16,9 @@ use App\Http\Controllers\AttendanceController;
 
 Route::get('/', function () {return view('welcome');});
 
+// PG03 表示
 Route::get('/attendance', [AttendanceController::class, 'index']);
+Route::post('/attendance/clock-in', [AttendanceController::class, 'store']);
+Route::post('/attendance/clock-out', [AttendanceController::class, 'update']); // 退勤
+Route::post('/attendance/break-in', [AttendanceController::class, 'breakIn']);  // 休憩入
+Route::post('/attendance/break-out', [AttendanceController::class, 'breakOut']); // 休憩戻

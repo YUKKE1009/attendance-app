@@ -82,3 +82,10 @@
 .attendance__button--white:hover {
     background-color: #f9f9f9;
 }
+
+.attendance__thanks {
+    margin-top: 40px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
