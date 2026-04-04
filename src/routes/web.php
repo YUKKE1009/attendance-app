@@ -27,5 +27,18 @@ Route::middleware('auth')->group(function () {
         Route::post('/break-out', [AttendanceController::class, 'breakOut'])->name('attendance.breakOut');
     });
 
-    // 今後、勤怠一覧画面や申請画面を作る際も、この middleware('auth') の中に追加していきます
+    /// PG04 勤怠一覧画面
+    Route::get('/attendance/list', function () {
+        return '<h2>PG04: 勤怠一覧画面（作成中）</h2>';
+    })->name('attendance.list');
+
+    //：PG06 申請一覧画面
+    Route::get('/stamp_correction_request/list', function () {
+        return '<h2>PG06: 申請一覧画面（作成中）</h2>';
+    })->name('request.list');
+
+    //：PG05 勤怠詳細画面（後で使う用）
+    Route::get('/attendance/detail/{id}', function ($id) {
+        return "<h2>PG05: 勤怠詳細画面 ID:{$id}（作成中）</h2>";
+    })->name('attendance.detail');
 });
