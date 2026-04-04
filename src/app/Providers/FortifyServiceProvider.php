@@ -33,6 +33,16 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
+        // 会員登録画面に使用するViewを指定
+        Fortify::registerView(function () {
+            return view('auth.register');
+        });
+
+        // ログイン画面に使用するViewを指定
+        Fortify::loginView(function () {
+            return view('auth.login');
+        });
+
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
 

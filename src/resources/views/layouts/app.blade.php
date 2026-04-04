@@ -15,26 +15,29 @@
         <div class="header__inner">
             <div class="header__logo">
                 <a href="/">
-                    {{-- 画像がないとエラーになる可能性があるので一旦テキスト併記 --}}
+                    {{-- ロゴ画像が確実に出るように --}}
                     <img src="{{ asset('img/header-logo.png') }}" alt="COACHTECH">
                 </a>
             </div>
 
             {{--
-                ★トラブル回避：一旦ログインチェック(Auth)を無効化して必ず表示させます
-                開発が進んでログインができるようになったら、ここのコメントアウトを外しましょう
-            --}}
+            navタグ自体は常に置いておくことで、flexの左右配置(justify-content)を維持します。
+            中身のリストだけを @auth で制御します。
+        --}}
             <nav class="header__nav">
                 <ul class="header__nav-list">
+
+                    @auth
                     <li class="header__nav-item"><a href="/attendance">勤怠</a></li>
                     <li class="header__nav-item"><a href="/attendance/list">勤怠一覧</a></li>
                     <li class="header__nav-item"><a href="/request">申請</a></li>
                     <li class="header__nav-item">
-                        <form action="/logout" method="post">
+                        <form action="/logout" method="post" class="header__form">
                             @csrf
                             <button type="submit" class="header__nav-button">ログアウト</button>
                         </form>
                     </li>
+                    @endauth
                 </ul>
             </nav>
         </div>

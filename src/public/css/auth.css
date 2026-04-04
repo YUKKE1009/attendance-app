@@ -1,0 +1,109 @@
+/* 全体設定 */
+body {
+    background-color: #fff;
+    /* 背景を真っ白に */
+    margin: 0;
+    font-family: "Arial", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+    color: #333;
+}
+
+/* ヘッダー */
+.header {
+    background-color: #000;
+    padding: 15px 50px;
+}
+
+.header__logo {
+    color: #fff;
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* メインコンテンツ */
+.main {
+    display: flex;
+    justify-content: center;
+    padding-top: 80px;
+    /* 上部に少し余裕を持たせる */
+}
+
+.auth-card {
+    background-color: #fff;
+    width: 100%;
+    max-width: 450px;
+    /* カードの幅を少しスリムに */
+    padding: 20px;
+}
+
+.auth-card__title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 40px;
+}
+
+/* フォーム要素 */
+.form__group {
+    margin-bottom: 20px;
+}
+
+.form__label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.form__input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+/* エラーメッセージ */
+.form__error {
+    color: #ff0000;
+    font-size: 13px;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* ボタン */
+.form__button {
+    width: 100%;
+    padding: 14px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: opacity 0.3s;
+}
+
+.form__button:hover {
+    opacity: 0.8;
+}
+
+/* フッターリンク */
+.auth-footer {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.auth-footer__link {
+    color: #0066cc;
+    /* リンクらしい青色に */
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.auth-footer__link:hover {
+    text-decoration: underline;
+}
