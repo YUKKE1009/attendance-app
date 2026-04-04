@@ -1,0 +1,61 @@
+/* DG01 準拠：基本設定 */
+body {
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+/* DG01 準拠：ヘッダー */
+.header {
+    background-color: #000000;
+    /* ヘッダーは黒 */
+    height: 80px;
+    /* 画像のロゴサイズから推測した高さ */
+    display: flex;
+    align-items: center;
+}
+
+.header__inner {
+    width: 100%;
+    max-width: 1540px;
+    /* DG02準拠 */
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header__logo img {
+    height: 32px;
+    /* ロゴ画像に準拠 */
+    display: block;
+}
+
+/* DG01 準拠：ナビゲーション (共通) */
+.header__nav-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 40px;
+}
+
+.header__nav-item a,
+.header__nav-button {
+    text-decoration: none;
+    color: #ffffff;
+    /* 文字は白 */
+    font-weight: bold;
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* メインコンテンツエリア */
+.main {
+    max-width: 1540px;
+    /* DG02準拠 */
+    margin: 0 auto;
+}

@@ -1,0 +1,84 @@
+.attendance__container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+/* ステータスバッジ */
+.attendance__status {
+    margin-bottom: 20px;
+}
+
+.attendance__status-badge {
+    background-color: #E0E0E0;
+    color: #666;
+    padding: 8px 32px;
+    font-size: 21px;
+    border-radius: 30px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+/* 日時エリア */
+.attendance__header {
+    margin-bottom: 40px;
+}
+
+.attendance__date {
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.attendance__time {
+    font-size: 80px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+/* ボタンレイアウト */
+.attendance__button-group {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.attendance__button {
+    width: 200px;
+    height: 80px;
+    border-radius: 12px;
+    font-size: 36px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 黒ボタン（出勤・退勤） */
+.attendance__button--black {
+    background-color: #000;
+    color: #fff;
+}
+
+.attendance__button--black:hover {
+    background-color: #333;
+}
+
+/* 白ボタン（休憩入・休憩戻） */
+.attendance__button--white {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.attendance__button--white:hover {
+    background-color: #f9f9f9;
+}
