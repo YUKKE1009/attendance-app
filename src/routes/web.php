@@ -3,22 +3,19 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+Route::get('/', function () {
+    return view('welcome');
+});
 
-Route::get('/', function () {return view('welcome');});
+// // ログイン済みユーザーのみアクセス可能にする（認証の保護）
+// Route::middleware('auth')->group(function () {
 
-// PG03 表示
-Route::get('/attendance', [AttendanceController::class, 'index']);
-Route::post('/attendance/clock-in', [AttendanceController::class, 'store']);
-Route::post('/attendance/clock-out', [AttendanceController::class, 'update']); // 退勤
-Route::post('/attendance/break-in', [AttendanceController::class, 'breakIn']);  // 休憩入
-Route::post('/attendance/break-out', [AttendanceController::class, 'breakOut']); // 休憩戻
+    // PG03: 出勤登録画面（表示・打刻アクション）
+    Route::prefix('attendance')->group(function () {
+        Route::get('/', [AttendanceController::class, 'index'])->name('attendance.index');
+        Route::post('/clock-in', [AttendanceController::class, 'store'])->name('attendance.store');
+        Route::post('/clock-out', [AttendanceController::class, 'update'])->name('attendance.update');
+        Route::post('/break-in', [AttendanceController::class, 'breakIn'])->name('attendance.breakIn');
+        Route::post('/break-out', [AttendanceController::class, 'breakOut'])->name('attendance.breakOut');
+    });
+// });
