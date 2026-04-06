@@ -1,0 +1,127 @@
+/* 全体の背景 */
+body {
+    background-color: #F6F6F6;
+    margin: 0;
+    color: #333;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.attendance-list {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* タイトル：左の黒棒を強調 */
+.attendance-list__title {
+    font-size: 28px;
+    font-weight: bold;
+    border-left: 8px solid #000;
+    padding-left: 20px;
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+/* 年月ナビ：左右にボタンを配置し、中央に日付を表示 */
+.attendance-list__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* 両端と中央に配置 */
+    background: #fff;
+    padding: 15px 40px;
+    /* 左右の余白を多めに */
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.nav-btn {
+    text-decoration: none;
+    color: #888;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.nav-btn:hover {
+    color: #000;
+}
+
+.current-month {
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* テーブル：文字を中央寄せに統一 */
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.attendance-table th {
+    background-color: #fff;
+    color: #888;
+    font-weight: bold;
+    padding: 20px;
+    border-bottom: 2px solid #F6F6F6;
+    text-align: center;
+    /* ヘッダー中央寄せ */
+}
+
+.attendance-table td {
+    padding: 20px;
+    border-bottom: 1px solid #F6F6F6;
+    text-align: center;
+    /* データ中央寄せ */
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* 詳細リンク */
+.detail-link {
+    color: #000;
+    text-decoration: none;
+    font-weight: 800;
+}
+
+.detail-link:hover {
+    background-color: #aaaaaa;
+    color: #ffffff;
+    text-decoration: none;
+
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+    .attendance-list__nav {
+        padding: 15px 20px;
+    }
+
+    .current-month {
+        font-size: 18px;
+    }
+}
+
+/* 土曜日の行を薄い青に */
+.is-saturday {
+    color: #0000ff;
+    /* 文字色を青に */
+}
+
+/* 日曜日の行を薄い赤に */
+.is-sunday {
+    color: #ff0000;
+    /* 文字色を赤に */
+}
+
+/* データがない行の背景を少し変える場合はこちら */
+tr:not(:has(td:nth-child(2):not(:empty))) {
+    background-color: #fafafa;
+}

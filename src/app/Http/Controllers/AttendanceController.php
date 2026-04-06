@@ -103,4 +103,21 @@ class AttendanceController extends Controller
 
         return redirect('/attendance');
     }
+
+    public function list(Request $request)
+    {
+        $userId = Auth::id();
+
+        // クエリパラメータから年月を取得（なければ今月）
+        $month = $request->query('month', Carbon::now()->format('Y-m'));
+
+        // 指定された月の出勤データを取得（休憩データも一緒に読み込む）
+        $attendances = Attendance::with('rests')
+            ->where('user_id', $userId)
+            ->where('date', 'like', "$month%")
+            ->orderBy('date', 'asc')
+            ->get();
+
+        return view('attendance.list', compact('attendances', 'month'));
+    }
 }
