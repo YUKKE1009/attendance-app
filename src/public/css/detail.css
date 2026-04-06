@@ -1,0 +1,152 @@
+/* 全体の背景（少し暗めのグレーに設定） */
+body {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.attendance-detail {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 0 40px;
+}
+
+.attendance-detail__title {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの左の黒棒（画像に合わせて少し太く短く） */
+.attendance-detail__title::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 35px;
+    background-color: #000;
+    margin-right: 20px;
+}
+
+/* 白いカード部分 */
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+    font-weight: bold;
+}
+
+.detail-table th,
+.detail-table td {
+    padding: 30px 40px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.detail-table tr:last-child th,
+.detail-table tr:last-child td {
+    border-bottom: none;
+}
+
+.detail-table th {
+    width: 300px;
+    font-weight: 500;
+    color: #666;
+    text-align: left;
+}
+
+.date-display{
+    display: flex;
+    gap: 150px;
+    color: #333;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* 日付の数値間隔 */
+.date-display span {
+    letter-spacing: 0.05em;
+}
+
+.date-display .unit {
+    margin-right: 30px;
+}
+
+/* 入力ボックス（枠線を極限まで細く） */
+input[type="time"],
+input[type="text"],
+.time-input {
+    width: 110px;
+    height: 40px;
+    text-align: center;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 500;
+    box-sizing: border-box;
+}
+
+/* 休憩2などの「空ボックス」の時の枠線を少し淡くする */
+input[type="text"].time-input {
+    border-color: #e6e6e6;
+}
+
+/* 共通：時計アイコン消去 */
+input::-webkit-calendar-picker-indicator {
+    display: none !important;
+}
+
+/* 波線の調整 */
+.time-separator {
+    display: inline-block;
+    margin: 0 30px;
+    font-size: 24px;
+    line-height: 40px;
+    vertical-align: middle;
+}
+
+/* 備考欄（画像通り、枠を少しだけ持たせる） */
+textarea {
+    width: 100%;
+    max-width: 480px;
+    /* 画像の比率に合わせて制限 */
+    height: 100px;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 16px;
+    resize: none;
+}
+
+/* 修正ボタン（右寄せ・角丸・パディング） */
+.form-actions {
+    margin-top: 40px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.update-btn {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 15px 70px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.update-btn:hover {
+    opacity: 0.8;
+}
+
+/* 承認待ちメッセージ（右寄せ・赤） */
+.pending-message {
+    color: #ff4d4d;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: right;
+    margin-top: 10px;
+}

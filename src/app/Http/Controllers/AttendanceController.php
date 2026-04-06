@@ -120,4 +120,13 @@ class AttendanceController extends Controller
 
         return view('attendance.list', compact('attendances', 'month'));
     }
+
+    public function show($id)
+    {
+        $attendance = Attendance::with(['rests', 'user'])->findOrFail($id);
+
+        $isPending = ($attendance->status === '承認待ち');
+
+        return view('attendance.detail', compact('attendance', 'isPending'));
+    }
 }
