@@ -1,7 +1,8 @@
-/* 全体の背景（少し暗めのグレーに設定） */
+/* 全体の背景 */
 body {
     background-color: #f2f2f2;
     color: #333;
+    font-family: sans-serif;
 }
 
 .attendance-detail {
@@ -18,7 +19,6 @@ body {
     align-items: center;
 }
 
-/* タイトルの左の黒棒（画像に合わせて少し太く短く） */
 .attendance-detail__title::before {
     content: "";
     display: inline-block;
@@ -36,7 +36,6 @@ body {
     border-radius: 10px;
     border: 1px solid #e0e0e0;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-    font-weight: bold;
 }
 
 .detail-table th,
@@ -52,12 +51,19 @@ body {
 
 .detail-table th {
     width: 300px;
-    font-weight: 500;
+    font-weight: bold;
+    /* 要件に合わせて太字 */
     color: #666;
     text-align: left;
 }
 
-.date-display{
+.detail-table td {
+    font-weight: bold;
+    /* 要件に合わせて太字 */
+}
+
+/* 日付の余白再現 */
+.date-display {
     display: flex;
     gap: 150px;
     color: #333;
@@ -65,37 +71,29 @@ body {
     font-weight: bold;
 }
 
-/* 日付の数値間隔 */
 .date-display span {
     letter-spacing: 0.05em;
 }
 
-.date-display .unit {
-    margin-right: 30px;
-}
-
-/* 入力ボックス（枠線を極限まで細く） */
+/* 入力ボックス */
 input[type="time"],
-input[type="text"],
-.time-input {
+input[type="text"].time-input {
     width: 110px;
     height: 40px;
     text-align: center;
     border: 1px solid #dcdcdc;
     border-radius: 6px;
     font-size: 18px;
-    font-weight: 500;
+    font-weight: bold;
     box-sizing: border-box;
 }
 
-/* 休憩2などの「空ボックス」の時の枠線を少し淡くする */
-input[type="text"].time-input {
-    border-color: #e6e6e6;
-}
-
-/* 共通：時計アイコン消去 */
-input::-webkit-calendar-picker-indicator {
-    display: none !important;
+/* 時計アイコン消去（詳細度で対応） */
+.attendance-detail .detail-table td input[type="time"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+    width: 0;
+    height: 0;
 }
 
 /* 波線の調整 */
@@ -107,20 +105,20 @@ input::-webkit-calendar-picker-indicator {
     vertical-align: middle;
 }
 
-/* 備考欄（画像通り、枠を少しだけ持たせる） */
+/* 備考欄 */
 textarea {
     width: 100%;
     max-width: 480px;
-    /* 画像の比率に合わせて制限 */
     height: 100px;
     padding: 15px;
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     font-size: 16px;
+    font-weight: bold;
     resize: none;
 }
 
-/* 修正ボタン（右寄せ・角丸・パディング） */
+/* 修正ボタン */
 .form-actions {
     margin-top: 40px;
     display: flex;
@@ -138,15 +136,17 @@ textarea {
     cursor: pointer;
 }
 
-.update-btn:hover {
-    opacity: 0.8;
-}
-
-/* 承認待ちメッセージ（右寄せ・赤） */
-.pending-message {
+/* 承認待ち・エラーメッセージ共通 */
+.pending-message,
+.error-item {
     color: #ff4d4d;
     font-size: 16px;
     font-weight: bold;
-    text-align: right;
     margin-top: 10px;
+    display: block;
+}
+
+/* エラーは左寄せ（td内）、承認待ちは右寄せ（ボタン下） */
+.pending-message {
+    text-align: right;
 }

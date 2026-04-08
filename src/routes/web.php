@@ -32,8 +32,8 @@ Route::middleware('auth')->group(function () {
         // PG05: 勤怠詳細画面
         Route::get('/detail/{id}', [AttendanceController::class, 'show'])->name('attendance.detail');
         Route::post('/detail/{id}', [AttendanceController::class, 'updateRequest'])->name('attendance.update_request');
-    }); // ← ここ！この閉じカッコが抜けていました
+    });
 
     // 3. PG06: 申請一覧
     Route::get('/stamp_correction_request/list', [AttendanceController::class, 'requestList'])->name('request.list');
-}); // ← middlewareグループの閉じ
+});

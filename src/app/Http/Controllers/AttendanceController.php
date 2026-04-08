@@ -129,4 +129,40 @@ class AttendanceController extends Controller
 
         return view('attendance.detail', compact('attendance', 'isPending'));
     }
+
+    // 修正申請の実行処理 (FN030)
+    public function updateRequest(\App\Http\Requests\AttendanceUpdateRequest $request, $id)
+    {
+        $attendance = Attendance::findOrFail($id);
+
+        // 1. 勤怠本体の更新とステータスを「承認待ち」に変更 (FN030-2)
+        $attendance->update([
+            'clock_in'  => $request->clock_in,
+            'clock_out' => $request->clock_out,
+            'note'      => $request->note,
+            'status'    => '承認待ち',
+        ]);
+
+        // 2. 既存の休憩データの更新
+        if ($request->has('rests')) {
+            foreach ($request->rests as $restId => $restData) {
+                Rest::where('id', $restId)->update([
+                    'break_in'  => $restData['break_in'],
+                    'break_out' => $restData['break_out'],
+                ]);
+            }
+        }
+
+        // 3. 新規追加分の休憩保存 (FN026-4)
+        if ($request->new_rest_in && $request->new_rest_out) {
+            Rest::create([
+                'attendance_id' => $attendance->id,
+                'break_in'      => $request->new_rest_in,
+                'break_out'     => $request->new_rest_out,
+            ]);
+        }
+
+        // 4. 申請一覧画面へリダイレクト
+        return redirect()->route('request.list')->with('message', '修正申請を出しました');
+    }
 }
