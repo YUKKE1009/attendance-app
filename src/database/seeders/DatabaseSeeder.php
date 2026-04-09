@@ -78,7 +78,7 @@ class DatabaseSeeder extends Seeder
                         'date' => $dayStr,
                         'clock_in' => '09:00:00',
                         'clock_out' => '18:00:00',
-                        'status' => 'finished',
+                        'status' => '退勤済',
                     ]);
 
                     // 休憩データもセットで作成（画像に合わせて12:00-13:00）

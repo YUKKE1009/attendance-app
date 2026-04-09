@@ -34,7 +34,7 @@
                     <input type="time" name="clock_in" value="{{ old('clock_in', substr($attendance->clock_in, 0, 5)) }}">
                     <span class="time-separator">〜</span>
                     <input type="time" name="clock_out" value="{{ old('clock_out', substr($attendance->clock_out, 0, 5)) }}">
-                    {{-- 出勤・退勤のエラー (FN029-1) --}}
+                    {{-- FN029-1 --}}
                     @error('clock_out')
                     <p class="error-item">{{ $message }}</p>
                     @enderror
@@ -66,10 +66,12 @@
                     <input type="text" name="new_rest_in" onfocus="(this.type='time')" onblur="if(!this.value) this.type='text'" class="time-input">
                     <span class="time-separator">〜</span>
                     <input type="text" name="new_rest_out" onfocus="(this.type='time')" onblur="if(!this.value) this.type='text'" class="time-input">
-                    {{-- 休憩時間全体に関するエラー (FN029-2, 3) --}}
-                    @error('rests')
+                    {{-- FN029-2, 3 休憩に関するすべてのエラーを表示 --}}
+                    @if ($errors->has('rests'))
+                    @foreach ($errors->get('rests') as $message)
                     <p class="error-item">{{ $message }}</p>
-                    @enderror
+                    @endforeach
+                    @endif
                 </td>
             </tr>
             @endif
@@ -81,7 +83,7 @@
                     <div class="note-text">{{ $attendance->note }}</div>
                     @else
                     <textarea name="note">{{ old('note', $attendance->note) }}</textarea>
-                    {{-- 備考未入力エラー (FN029-4) ★これが一番最後に表示されます --}}
+                    {{-- FN029-4 --}}
                     @error('note')
                     <p class="error-item">{{ $message }}</p>
                     @enderror
@@ -92,8 +94,10 @@
 
         <div class="form-actions">
             @if($isPending)
+            {{-- ステータスが「承認待ち」の時 --}}
             <p class="pending-message">*承認待ちのため修正はできません。</p>
             @else
+            {{-- それ以外の時 --}}
             <button type="submit" class="update-btn">修正</button>
             @endif
         </div>

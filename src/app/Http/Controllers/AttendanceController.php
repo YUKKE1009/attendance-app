@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Attendance;
-use App\Models\Rest; // 休憩モデルも使う場合は追加
+use App\Models\Rest;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+// ★ FormRequestをuseに追加
+use App\Http\Requests\AttendanceUpdateRequest;
 
 class AttendanceController extends Controller
 {
@@ -24,7 +26,6 @@ class AttendanceController extends Controller
     }
 
     // 出勤処理
-    // 「出勤」ボタンが押された時の保存処理
     public function store(Request $request)
     {
         $userId = Auth::id() ?? 1;
@@ -62,16 +63,13 @@ class AttendanceController extends Controller
         $userId = Auth::id() ?? 1;
         $today = Carbon::now()->format('Y-m-d');
 
-        // 1. 親となる今日の出勤データを探す
         $attendance = Attendance::where('user_id', $userId)
             ->where('date', $today)
             ->first();
 
         if ($attendance) {
-            // 2. 出勤データのステータスを「休憩中」に更新
             $attendance->update(['status' => '休憩中']);
 
-            // 3. 【追加！】restsテーブルに新しい行を作成して保存
             Rest::create([
                 'attendance_id' => $attendance->id,
                 'break_in'      => Carbon::now()->format('H:i:s'),
@@ -92,10 +90,8 @@ class AttendanceController extends Controller
             ->first();
 
         if ($attendance) {
-            // 1. 出勤データのステータスを「出勤中」に戻す
             $attendance->update(['status' => '出勤中']);
 
-            // 2. 【追加！】restsテーブルの「まだ終わっていない（break_outが空）休憩」を探して、終了時間を記録
             Rest::where('attendance_id', $attendance->id)
                 ->whereNull('break_out')
                 ->update(['break_out' => Carbon::now()->format('H:i:s')]);
@@ -107,11 +103,8 @@ class AttendanceController extends Controller
     public function list(Request $request)
     {
         $userId = Auth::id();
-
-        // クエリパラメータから年月を取得（なければ今月）
         $month = $request->query('month', Carbon::now()->format('Y-m'));
 
-        // 指定された月の出勤データを取得（休憩データも一緒に読み込む）
         $attendances = Attendance::with('rests')
             ->where('user_id', $userId)
             ->where('date', 'like', "$month%")
@@ -124,18 +117,17 @@ class AttendanceController extends Controller
     public function show($id)
     {
         $attendance = Attendance::with(['rests', 'user'])->findOrFail($id);
-
         $isPending = ($attendance->status === '承認待ち');
 
         return view('attendance.detail', compact('attendance', 'isPending'));
     }
 
     // 修正申請の実行処理 (FN030)
-    public function updateRequest(\App\Http\Requests\AttendanceUpdateRequest $request, $id)
+    public function updateRequest(AttendanceUpdateRequest $request, $id)
     {
         $attendance = Attendance::findOrFail($id);
 
-        // 1. 勤怠本体の更新とステータスを「承認待ち」に変更 (FN030-2)
+        // 1. 勤怠本体の更新とステータスを「承認待ち」に変更
         $attendance->update([
             'clock_in'  => $request->clock_in,
             'clock_out' => $request->clock_out,
@@ -153,7 +145,7 @@ class AttendanceController extends Controller
             }
         }
 
-        // 3. 新規追加分の休憩保存 (FN026-4)
+        // 3. 新規追加分の休憩保存
         if ($request->new_rest_in && $request->new_rest_out) {
             Rest::create([
                 'attendance_id' => $attendance->id,
@@ -162,7 +154,18 @@ class AttendanceController extends Controller
             ]);
         }
 
-        // 4. 申請一覧画面へリダイレクト
         return redirect()->route('request.list')->with('message', '修正申請を出しました');
+    }
+
+    // ★PG06: 申請一覧画面の表示
+    public function requestList(Request $request)
+    {
+        $userId = Auth::id();
+        $attendances = Attendance::where('user_id', $userId)
+            ->whereIn('status', ['承認待ち', '承認済み'])
+            ->get();
+
+        // views/request/list.blade.php を見に行くように修正
+        return view('request.list', compact('attendances'));
     }
 }
