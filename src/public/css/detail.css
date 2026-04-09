@@ -78,7 +78,7 @@ body {
 /* 入力ボックス */
 input[type="time"],
 input[type="text"].time-input {
-    width: 110px;
+    width: 80px;
     height: 40px;
     text-align: center;
     border: 1px solid #dcdcdc;
@@ -99,7 +99,7 @@ input[type="text"].time-input {
 /* 波線の調整 */
 .time-separator {
     display: inline-block;
-    margin: 0 30px;
+    margin: 0 70px;
     font-size: 24px;
     line-height: 40px;
     vertical-align: middle;
@@ -146,7 +146,6 @@ textarea {
     display: block;
 }
 
-/* エラーは左寄せ（td内）、承認待ちは右寄せ（ボタン下） */
 .pending-message {
     text-align: right;
 }
