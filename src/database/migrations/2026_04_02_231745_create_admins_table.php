@@ -17,6 +17,7 @@ class CreateAdminsTable extends Migration
             $table->id();
             $table->string('email')->unique(); // 重複を許さない
             $table->string('password');
+            $table->rememberToken();
             $table->timestamps();
         });
     }

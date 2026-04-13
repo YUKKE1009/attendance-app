@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
-
+use Laravel\Fortify\Http\Requests\LoginRequest;
+use App\Models\Admin;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 class FortifyServiceProvider extends ServiceProvider
 {
     /**
@@ -20,7 +23,12 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(LoginRequest::class, function ($app) {
+            if ($app->request->is('admin/*')) {
+                config(['fortify.guard' => 'admin']);
+            }
+            return new LoginRequest($app->request);
+        });
     }
 
     /**
@@ -42,6 +50,13 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::loginView(function () {
             return view('auth.login');
         });
+
+        // 管理者用のログイン表示を追加
+        if (request()->is('admin/*')) {
+            Fortify::loginView(function () {
+                return view('admin.login');
+            });
+        }
 
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());

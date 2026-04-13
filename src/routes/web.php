@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\Admin\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,4 +37,29 @@ Route::middleware('auth')->group(function () {
 
     // 3. PG06: 申請一覧
     Route::get('/stamp_correction_request/list', [AttendanceController::class, 'requestList'])->name('request.list');
+});
+
+// --- 管理者用ルート ---
+Route::prefix('admin')->group(function () {
+
+    // 【ログイン前】PG07: 管理者ログイン画面の表示
+    // ※ログイン処理(POST)はFortifyが「/admin/login」というURLで自動的に引き受けてくれます
+    Route::get('/login', function () {
+        return view('admin.login');
+    })->name('admin.login');
+
+    // 【ログイン後のみアクセス可能】
+    Route::middleware('auth:admin')->group(function () {
+
+        // PG08: 全スタッフの勤怠一覧（とりあえずの戻り先）
+        Route::get('/attendance/list', function () {
+            return "管理者勤怠一覧画面（準備中）";
+        })->name('admin.attendance.list');
+
+        // 今後ここに PG09〜PG13 のルートを追記していきます
+
+        // ログアウト（POST）
+        // ※Fortifyのデフォルトは「/logout」ですが、管理者はここを叩くようにします
+        Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('admin.logout');
+    });
 });

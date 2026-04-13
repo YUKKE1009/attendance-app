@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken(); // これが仕様書の remember_token (varchar 100) になります
+            $table->rememberToken();
             $table->timestamps();
         });
     }
