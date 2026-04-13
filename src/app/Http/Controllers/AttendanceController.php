@@ -127,6 +127,16 @@ class AttendanceController extends Controller
     {
         $attendance = Attendance::findOrFail($id);
 
+        $clockIn = $request->clock_in;
+        if ($clockIn && strlen($clockIn) === 5) {
+            $clockIn .= ':00';
+        }
+
+        $clockOut = $request->clock_out;
+        if ($clockOut && strlen($clockOut) === 5) {
+            $clockOut .= ':00';
+        }
+
         // 1. 勤怠本体の更新とステータスを「承認待ち」に変更
         $attendance->update([
             'clock_in'  => $request->clock_in,

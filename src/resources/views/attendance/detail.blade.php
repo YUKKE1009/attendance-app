@@ -31,9 +31,9 @@
                     <span class="time-separator">〜</span>
                     {{ substr($attendance->clock_out, 0, 5) }}
                     @else
-                    <input type="time" name="clock_in" value="{{ old('clock_in', substr($attendance->clock_in, 0, 5)) }}">
+                    <input type="text" name="clock_in" class="time-input" value="{{ old('clock_in', substr($attendance->clock_in, 0, 5)) }}">
                     <span class="time-separator">〜</span>
-                    <input type="time" name="clock_out" value="{{ old('clock_out', substr($attendance->clock_out, 0, 5)) }}">
+                    <input type="text" name="clock_out" class="time-input" value="{{ old('clock_out', substr($attendance->clock_out, 0, 5)) }}">
                     {{-- FN029-1 --}}
                     @error('clock_out')
                     <p class="error-item">{{ $message }}</p>
@@ -51,21 +51,22 @@
                     <span class="time-separator">〜</span>
                     {{ substr($rest->break_out, 0, 5) }}
                     @else
-                    <input type="time" name="rests[{{ $rest->id }}][break_in]" value="{{ old("rests.{$rest->id}.break_in", substr($rest->break_in, 0, 5)) }}">
+                    <input type="text" name="rests[{{ $rest->id }}][break_in]" class="time-input" value="{{ old("rests.{$rest->id}.break_in", substr($rest->break_in, 0, 5)) }}">
                     <span class="time-separator">〜</span>
-                    <input type="time" name="rests[{{ $rest->id }}][break_out]" value="{{ old("rests.{$rest->id}.break_out", substr($rest->break_out, 0, 5)) }}">
+                    <input type="text" name="rests[{{ $rest->id }}][break_out]" class="time-input" value="{{ old("rests.{$rest->id}.break_out", substr($rest->break_out, 0, 5)) }}">
                     @endif
                 </td>
             </tr>
             @endforeach
 
+
             @if(!$isPending)
             <tr>
                 <th>休憩{{ count($attendance->rests) + 1 }}</th>
                 <td>
-                    <input type="text" name="new_rest_in" onfocus="(this.type='time')" onblur="if(!this.value) this.type='text'" class="time-input">
+                    <input type="text" name="new_rest_in" class="time-input" placeholder="00:00">
                     <span class="time-separator">〜</span>
-                    <input type="text" name="new_rest_out" onfocus="(this.type='time')" onblur="if(!this.value) this.type='text'" class="time-input">
+                    <input type="text" name="new_rest_out" class="time-input" placeholder="00:00">
                     {{-- FN029-2, 3 休憩に関するすべてのエラーを表示 --}}
                     @if ($errors->has('rests'))
                     @foreach ($errors->get('rests') as $message)
