@@ -24,9 +24,16 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // LoginRequestが解決（使用）される直前に実行される処理
-        $this->app->resolving(LoginRequest::class, function ($request, $app) {
-            // 管理者URLの時だけガードをadminに切り替える
+        // 管理者URLの時だけ、独自のバリデーションRequestを使うように指示
+        $this->app->bind(\Laravel\Fortify\Http\Requests\LoginRequest::class, function ($app) {
+            if ($app->make('request')->is('admin/*')) {
+                return $app->make(\App\Http\Requests\AdminLoginRequest::class);
+            }
+            return new \Laravel\Fortify\Http\Requests\LoginRequest($app->make('request')->all());
+        });
+
+        // ログイン試行時のガード切り替え
+        $this->app->resolving(\Laravel\Fortify\Http\Requests\LoginRequest::class, function ($request, $app) {
             if ($app->make('request')->is('admin/*')) {
                 config(['fortify.guard' => 'admin']);
             }

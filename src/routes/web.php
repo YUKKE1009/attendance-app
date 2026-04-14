@@ -48,6 +48,8 @@ Route::prefix('admin')->group(function () {
         return view('admin.login');
     })->name('admin.login');
 
+    Route::post('/login', [Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::class, 'store']);
+
     // 【ログイン後のみアクセス可能】
     Route::middleware('auth:admin')->group(function () {
 
