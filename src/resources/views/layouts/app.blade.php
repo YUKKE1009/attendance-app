@@ -14,29 +14,38 @@
     <header class="header">
         <div class="header__inner">
             <div class="header__logo">
+                {{-- 管理者ログイン画面ならリンクなし、それ以外はトップへ --}}
+                @if(Request::is('admin/login'))
+                <img src="{{ asset('img/header-logo.png') }}" alt="COACHTECH">
+                @else
                 <a href="/">
-                    {{-- ロゴ画像が確実に出るように --}}
                     <img src="{{ asset('img/header-logo.png') }}" alt="COACHTECH">
                 </a>
+                @endif
             </div>
 
-            {{--
-            navタグ自体は常に置いておくことで、flexの左右配置(justify-content)を維持します。
-            中身のリストだけを @auth で制御します。
-        --}}
             <nav class="header__nav">
                 <ul class="header__nav-list">
-                    @auth
-                    @if(isset($attendance) && $attendance->status === '退勤済')
-                    {{-- 退勤後の表示：設計書のPG04とPG06へ --}}
+                    {{-- ■ 管理者としてログインしている場合 --}}
+                    @if(Auth::guard('admin')->check())
                     <li class="header__nav-item">
-                        <a href="/attendance/list">今月の出勤一覧</a>
+                        <a href="/admin/attendance/list">勤怠一覧</a>
                     </li>
                     <li class="header__nav-item">
-                        <a href="/stamp_correction_request/list">申請一覧</a>
+                        <a href="/admin/staff/list">スタッフ一覧</a>
                     </li>
-                    @else
-                    {{-- 通常時の表示：PG03, PG04, PG06へ --}}
+                    <li class="header__nav-item">
+                        <a href="/admin/stamp_correction_request/list">申請一覧</a>
+                    </li>
+                    <li class="header__nav-item">
+                        <form action="{{ route('admin.logout') }}" method="post" class="header__form">
+                            @csrf
+                            <button type="submit" class="header__nav-button">ログアウト</button>
+                        </form>
+                    </li>
+
+                    {{-- ■ 一般ユーザーとしてログインしている場合 --}}
+                    @elseif(Auth::check())
                     <li class="header__nav-item">
                         <a href="/attendance">勤怠</a>
                     </li>
@@ -46,15 +55,13 @@
                     <li class="header__nav-item">
                         <a href="/stamp_correction_request/list">申請</a>
                     </li>
-                    @endif
-
                     <li class="header__nav-item">
                         <form action="/logout" method="post" class="header__form">
                             @csrf
                             <button type="submit" class="header__nav-button">ログアウト</button>
                         </form>
                     </li>
-                    @endauth
+                    @endif
                 </ul>
             </nav>
         </div>

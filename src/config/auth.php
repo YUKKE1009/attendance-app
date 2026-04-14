@@ -40,13 +40,13 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        // ★ adminはここ（guardsの中）に入れる！
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
     ],
 
-    'admin' => [
-        'driver' => 'session',
-        'provider' => 'admins',
-    ],
-],
     /*
     |--------------------------------------------------------------------------
     | User Providers

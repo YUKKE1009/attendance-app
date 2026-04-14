@@ -16,6 +16,7 @@ use Laravel\Fortify\Http\Requests\LoginRequest;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+
 class FortifyServiceProvider extends ServiceProvider
 {
     /**
@@ -23,11 +24,12 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(LoginRequest::class, function ($app) {
-            if ($app->request->is('admin/*')) {
+        // LoginRequestが解決（使用）される直前に実行される処理
+        $this->app->resolving(LoginRequest::class, function ($request, $app) {
+            // 管理者URLの時だけガードをadminに切り替える
+            if ($app->make('request')->is('admin/*')) {
                 config(['fortify.guard' => 'admin']);
             }
-            return new LoginRequest($app->request);
         });
     }
 
@@ -41,26 +43,43 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
-        // 会員登録画面に使用するViewを指定
+        // 会員登録画面
         Fortify::registerView(function () {
             return view('auth.register');
         });
 
-        // ログイン画面に使用するViewを指定
+        // ログイン画面
         Fortify::loginView(function () {
+            if (request()->is('admin/*')) {
+                return view('admin.login');
+            }
             return view('auth.login');
         });
 
-        // 管理者用のログイン表示を追加
-        if (request()->is('admin/*')) {
-            Fortify::loginView(function () {
-                return view('admin.login');
-            });
-        }
+        // 管理者用の認証ロジックを追加 (FN016対応)
+        Fortify::authenticateUsing(function (LoginRequest $request) {
+            if ($request->is('admin/*')) {
+                $admin = Admin::where('email', $request->email)->first();
+
+                if ($admin && Hash::check($request->password, $admin->password)) {
+                    return $admin;
+                }
+
+                throw ValidationException::withMessages([
+                    Fortify::username() => 'ログイン情報が登録されていません',
+                ]);
+            }
+
+            // 一般ユーザー用の認証
+            $user = \App\Models\User::where('email', $request->email)->first();
+            if ($user && Hash::check($request->password, $user->password)) {
+                return $user;
+            }
+            return null;
+        });
 
         RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
-
+            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())) . '|' . $request->ip());
             return Limit::perMinute(5)->by($throttleKey);
         });
 
