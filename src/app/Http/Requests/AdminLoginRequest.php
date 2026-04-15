@@ -36,6 +36,7 @@ class AdminLoginRequest extends LoginRequest
             'email.required' => 'メールアドレスを入力してください',
             'email.email' => 'メールアドレス形式で入力してください',
             'password.required' => 'パスワードを入力してください',
+            'email.unique' => 'ご入力いただいたメールアドレスは既に登録されています。',
         ];
     }
 }

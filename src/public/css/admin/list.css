@@ -1,0 +1,112 @@
+/* 全体の背景 */
+body {
+    background-color: #F6F6F6;
+    margin: 0;
+    color: #333;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* ページタイトル*/
+.page-title {
+    font-size: 28px;
+    font-weight: bold;
+    border-left: 8px solid #000;
+    padding-left: 20px;
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+/* 日付ナビゲーションバー*/
+.date-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    padding: 15px 40px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.nav-btn {
+    text-decoration: none;
+    color: #888;
+    font-size: 18px;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.nav-btn:hover {
+    color: #000;
+}
+
+.date-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* 勤怠テーブルエリア */
+.table-wrapper {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.attendance-table th {
+    background-color: #fff;
+    color: #888;
+    font-weight: bold;
+    padding: 20px;
+    border-bottom: 2px solid #F6F6F6;
+    text-align: center;
+}
+
+.attendance-table td {
+    padding: 20px;
+    border-bottom: 1px solid #F6F6F6;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* 詳細リンク*/
+.detail-link {
+    color: #000;
+    text-decoration: none;
+    font-weight: 800;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.detail-link:hover {
+    background-color: #aaaaaa;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .date-nav {
+        padding: 15px 20px;
+    }
+
+    .date-display {
+        font-size: 18px;
+    }
+}

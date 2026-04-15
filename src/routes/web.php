@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Admin\AuthenticatedSessionController;
-
+use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -66,9 +66,10 @@ Route::prefix('admin')->group(function () {
     Route::middleware('auth:admin')->group(function () {
 
         // PG08: 全スタッフの勤怠一覧
-        Route::get('/attendance/list', function () {
-            return "管理者勤怠一覧画面（準備中）";
-        })->name('admin.attendance.list');
+        Route::get('/attendance/list', [AdminAttendanceController::class, 'index'])->name('admin.attendance.list');
+
+        // PG09: 勤怠詳細画面
+        Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('admin.attendance.detail');
 
         // ログアウト
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('admin.logout');
