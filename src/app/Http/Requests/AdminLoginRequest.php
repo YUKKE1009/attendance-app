@@ -6,7 +6,6 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Laravel\Fortify\Http\Requests\LoginRequest;
 
-// 継承先を LoginRequest にすることで、コントローラーとの型を合わせます
 class AdminLoginRequest extends LoginRequest
 {
     /**
