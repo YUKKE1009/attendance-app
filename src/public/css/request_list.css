@@ -3,7 +3,6 @@
    ========================================== */
 body {
     background-color: #F6F6F6;
-    /* 管理者側の背景色に統一 */
     margin: 0;
     color: #333;
     font-family: 'Noto Sans JP', sans-serif;
@@ -11,25 +10,24 @@ body {
 
 .request-list {
     max-width: 1000px;
+    /* 管理者と同じ幅に制限 */
     margin: 0 auto;
     padding: 40px 20px;
-    /* 管理者側のマージン・パディングに統一 */
 }
 
-/* タイトル：左の黒棒デザイン（管理者側のサイズに合わせる） */
+/* タイトル：左の黒棒デザイン（管理者側の28pxサイズ） */
 .request-list__title {
     font-size: 28px;
-    /* 26pxから28pxへ */
     font-weight: bold;
     margin-bottom: 40px;
     display: flex;
     align-items: center;
+    line-height: 1.2;
 }
 
 .request-list__title::before {
     content: "";
     width: 8px;
-    /* 6pxから8pxへ */
     height: 35px;
     background-color: #000;
     margin-right: 20px;
@@ -42,7 +40,6 @@ body {
     display: flex;
     gap: 40px;
     border-bottom: 1px solid #ddd;
-    /* 管理者側の線色へ */
     margin-bottom: 30px;
     padding-left: 10px;
 }
@@ -50,20 +47,19 @@ body {
 .tab-item {
     text-decoration: none;
     color: #888;
-    /* ★選択されていない方はグレーにする */
+    /* 未選択は管理者と同じグレー */
+    padding-bottom: 15px;
     font-size: 18px;
     font-weight: bold;
-    padding-bottom: 15px;
     position: relative;
     display: inline-block;
     transition: color 0.3s;
     cursor: pointer;
 }
 
-/* 選択中のタブ（activeクラス時） */
+/* 選択中のタブ */
 .tab-item.active {
     color: #000;
-    /* ★選択されると黒になる */
 }
 
 .tab-item.active::after {
@@ -86,42 +82,74 @@ body {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    /* 管理者側の影の強さへ */
+    /* 管理者と同じ軽い影 */
+    table-layout: fixed;
+    /* 列幅を固定して安定させる */
 }
 
 .request-list__table th {
     background-color: #fff;
     color: #888;
-    padding: 20px;
+    padding: 20px 10px;
     border-bottom: 2px solid #F6F6F6;
     text-align: center;
-    /* スタッフ側も中央揃えを基本に */
     font-weight: bold;
 }
 
 .request-list__table td {
-    padding: 20px;
+    padding: 20px 10px;
     border-bottom: 1px solid #F6F6F6;
     text-align: center;
-    font-size: 18px;
-    /* 文字サイズを18pxへアップ */
-    font-weight: 500;
+    font-size: 16px;
+    /* 項目が多いため18pxから微調整 */
+    font-weight: bold;
     color: #333;
+    vertical-align: middle;
 }
 
-/* --- 列幅の個別設定 (スタッフ側の設定を継承しつつ調整) --- */
+/* --- 列幅の個別設定 (スタッフ側の項目数に合わせて最適化) --- */
+.request-list__table th:nth-child(1),
+.request-list__table td:nth-child(1) {
+    width: 90px;
+}
+
+/* 状態 */
+.request-list__table th:nth-child(2),
+.request-list__table td:nth-child(2) {
+    width: 100px;
+}
+
+/* 名前 */
+.request-list__table th:nth-child(3),
+.request-list__table td:nth-child(3) {
+    width: 130px;
+}
+
+/* 対象日時 */
 .request-list__table th:nth-child(4),
 .request-list__table td:nth-child(4) {
-    text-align: left;
-    /* 申請理由だけ左寄せにすると読みやすい */
+    width: auto;
+    text-align: center;
     word-break: break-all;
 }
 
-/* --- 詳細リンク（管理者側のシンプルスタイルへ） --- */
+.request-list__table th:nth-child(5),
+.request-list__table td:nth-child(5) {
+    width: 130px;
+}
+
+/* 申請日時 */
+.request-list__table th:nth-child(6),
+.request-list__table td:nth-child(6) {
+    width: 70px;
+}
+
+/* 詳細 */
+
+/* --- 詳細リンク（管理者側のシンプルスタイル） --- */
 .request-list__table td a {
     color: #000;
     text-decoration: underline;
-    /* 管理者側の下線スタイル */
     font-weight: 800;
     transition: all 0.3s;
 }

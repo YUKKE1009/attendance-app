@@ -36,7 +36,7 @@
                 <tr>
                     <td>{{ $status === 'approved' ? '承認済み' : '承認待ち' }}</td>
                     <td>{{ $req->user->name }}</td>
-                    <td>{{ \Carbon\Carbon::parse($req->target_date)->format('Y/m/d') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($req->date)->format('Y/m/d') }}</td>
                     <td>{{ $req->remarks }}</td>
                     <td>{{ \Carbon\Carbon::parse($req->created_at)->format('Y/m/d') }}</td>
                     <td>

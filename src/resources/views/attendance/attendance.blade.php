@@ -9,7 +9,7 @@
     {{-- 1. ステータスバッジ --}}
     <div class="attendance__status">
         <span class="attendance__status-badge">
-            {{ !$attendance ? '勤務外' : $attendance->status }}
+            {{ $displayStatus }}
         </span>
     </div>
 
@@ -25,14 +25,14 @@
 
     {{-- 3. 打刻ボタンエリア --}}
     <div class="attendance__button-group">
-        @if(!$attendance)
+        @if($displayStatus === '勤務外') {{-- ★以下、$displayStatusで判定 --}}
         {{-- 【勤務外】 --}}
         <form action="/attendance/clock-in" method="post">
             @csrf
             <button type="submit" class="attendance__button attendance__button--black">出勤</button>
         </form>
 
-        @elseif($attendance->status === '出勤中')
+        @elseif($displayStatus === '出勤中')
         {{-- 【出勤中】 --}}
         <form action="/attendance/clock-out" method="post">
             @csrf
@@ -43,14 +43,14 @@
             <button type="submit" class="attendance__button attendance__button--white">休憩入</button>
         </form>
 
-        @elseif($attendance->status === '休憩中')
+        @elseif($displayStatus === '休憩中')
         {{-- 【休憩中】 --}}
         <form action="/attendance/break-out" method="post">
             @csrf
             <button type="submit" class="attendance__button attendance__button--white">休憩戻</button>
         </form>
 
-        @elseif($attendance->status === '退勤済')
+        @elseif($displayStatus === '退勤済')
         {{-- 【退勤済】 --}}
         <p class="attendance__thanks">お疲れ様でした。</p>
         @endif

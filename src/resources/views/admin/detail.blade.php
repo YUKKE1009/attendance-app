@@ -27,7 +27,8 @@
             <tr>
                 <th>出勤・退勤</th>
                 <td>
-                    @if($attendance->status == '承認待ち')
+                    {{-- ★「承認待ち」または「承認済み」なら編集不可 --}}
+                    @if($attendance->status == '承認待ち' || $attendance->status == '承認済み')
                     {{ substr($attendance->clock_in, 0, 5) }}
                     <span class="time-separator">〜</span>
                     {{ substr($attendance->clock_out, 0, 5) }}
@@ -47,7 +48,8 @@
             <tr>
                 <th>休憩{{ $loop->iteration }}</th>
                 <td>
-                    @if($attendance->status == '承認待ち')
+                    {{-- ★「承認待ち」または「承認済み」なら編集不可 --}}
+                    @if($attendance->status == '承認待ち' || $attendance->status == '承認済み')
                     {{ substr($rest->break_in, 0, 5) }}
                     <span class="time-separator">〜</span>
                     {{ substr($rest->break_out, 0, 5) }}
@@ -60,7 +62,7 @@
             </tr>
             @endforeach
 
-            {{-- ★新規休憩の追加：承認待ちでも承認済みでもない時だけ表示 --}}
+            {{-- 新規休憩の追加：ステータスが「未申請（nullなど）」の時のみ表示 --}}
             @if($attendance->status != '承認待ち' && $attendance->status != '承認済み')
             <tr>
                 <th>休憩{{ count($attendance->rests) + 1 }}</th>
@@ -78,7 +80,8 @@
             <tr>
                 <th>備考</th>
                 <td>
-                    @if($attendance->status == '承認待ち')
+                    {{-- ★「承認待ち」または「承認済み」なら編集不可 --}}
+                    @if($attendance->status == '承認待ち' || $attendance->status == '承認済み')
                     <div class="note-text">{{ $attendance->remarks }}</div>
                     @else
                     <textarea name="remarks" class="textarea-field">{{ old('remarks', $attendance->remarks) }}</textarea>
@@ -92,13 +95,11 @@
 
         <div class="form-actions">
             @if($attendance->status == '承認待ち')
-            {{-- スタッフからの申請中 --}}
             <p class="pending-message">*承認待ちのため修正はできません。</p>
             @elseif($attendance->status == '承認済み')
-            {{-- 管理者修正反映後 --}}
+            {{-- ★「承認済み」の時はボタンも無効化 --}}
             <button type="button" class="approve-btn approved" disabled>承認済み</button>
             @else
-            {{-- 通常：修正可能 --}}
             <button type="submit" class="update-btn">修正</button>
             @endif
         </div>

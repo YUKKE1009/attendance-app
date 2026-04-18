@@ -13,17 +13,41 @@ use App\Http\Requests\AttendanceUpdateRequest;
 class AttendanceController extends Controller
 {
     // 表示処理
+    /**
+     * 打刻画面（出勤登録画面）の表示
+     */
     public function index()
     {
         $userId = Auth::id() ?? 1;
         $today = Carbon::now()->format('Y-m-d');
 
+        // 今日の勤怠データを取得
         $attendance = Attendance::where('user_id', $userId)
             ->where('date', $today)
             ->first();
 
-        return view('attendance.attendance', compact('attendance'));
+        // --- 画面表示用のステータスを判定するロジック ---
+        $displayStatus = '勤務外';
+
+        if ($attendance) {
+            // 1. 打刻フロー中のステータス（出勤中・休憩中）ならそのまま表示
+            if ($attendance->status === '出勤中' || $attendance->status === '休憩中') {
+                $displayStatus = $attendance->status;
+            }
+            // 2. 退勤打刻が済んでいる、または申請系（承認待ち・承認済み）のステータスの場合
+            elseif ($attendance->clock_out || $attendance->status === '退勤済' || $attendance->status === '承認待ち' || $attendance->status === '承認済み') {
+                $displayStatus = '退勤済';
+            }
+            // 3. それ以外（出勤打刻はあるが上記に当てはまらない場合）
+            else {
+                $displayStatus = '出勤中';
+            }
+        }
+
+        // Bladeに $attendance と $displayStatus の両方を渡す
+        return view('attendance.attendance', compact('attendance', 'displayStatus'));
     }
+       
 
     // 出勤処理
     public function store(Request $request)
