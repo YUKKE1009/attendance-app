@@ -110,3 +110,46 @@ body {
         font-size: 18px;
     }
 }
+
+/* --- スタッフ一覧用の追加設定 --- */
+
+/* スタッフ一覧テーブルの列幅固定 */
+.staff-list-table {
+    table-layout: fixed;
+}
+
+.staff-list-table th:nth-child(1),
+.staff-list-table td:nth-child(1) {
+    width: 25%;
+}
+
+/* 名前 */
+
+.staff-list-table th:nth-child(2),
+.staff-list-table td:nth-child(2) {
+    width: 50%;
+}
+
+/* メールアドレス */
+
+.staff-list-table th:nth-child(3),
+.staff-list-table td:nth-child(3) {
+    width: 25%;
+    text-align: center;
+}
+
+/* 月次勤怠 */
+
+/* テキストの配置（スクショに合わせて左寄せ） */
+.staff-list-table td,
+.staff-list-table th {
+    text-align: left;
+    padding-left: 40px;
+}
+
+/* 詳細ボタンの列だけは中央 */
+.staff-list-table td:nth-child(3),
+.staff-list-table th:nth-child(3) {
+    text-align: center;
+    padding-left: 0;
+}

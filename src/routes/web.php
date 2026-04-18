@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Admin\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
+use App\Http\Controllers\Admin\StaffController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -52,6 +54,7 @@ Route::middleware('auth:web')->group(function () {
 });
 
 // --- 4. 管理者用ルート ---
+// --- 4. 管理者用ルート ---
 Route::prefix('admin')->group(function () {
 
     // 【ログイン前】PG07: 管理者ログイン画面
@@ -64,14 +67,25 @@ Route::prefix('admin')->group(function () {
 
     // 【ログイン後のみアクセス可能】
     Route::middleware('auth:admin')->group(function () {
-        // 一覧
+
+        // PG08: 今日の勤怠一覧（全スタッフ）
         Route::get('/attendance/list', [AdminAttendanceController::class, 'index'])->name('admin.attendance.list');
 
+        // PG11: スタッフ別勤怠一覧（特定のスタッフの月次リスト）
+        // ※ /admin/attendance/staff/{id} にアクセス
+        Route::get('/attendance/staff/{id}', [AdminAttendanceController::class, 'staff'])->name('admin.staff.attendance');
+
+        // PG05相当: 勤怠詳細（特定の1日の修正画面）
+        // ※ IDの重複を避けるため staff/{id} の下に配置
         Route::get('/attendance/{id}', [AdminAttendanceController::class, 'show'])->name('admin.attendance.detail');
 
-        // 修正ボタンを押した時の保存先
+        // 修正保存
         Route::patch('/attendance/{id}', [AdminAttendanceController::class, 'update'])->name('admin.attendance.update');
-        //　ログアウト
+
+        // PG10: スタッフ一覧
+        Route::get('/staff/list', [StaffController::class, 'index'])->name('admin.staff.list');
+
+        // ログアウト
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('admin.logout');
     });
 });
