@@ -1,18 +1,25 @@
-/* 全体の背景 */
+/* ==========================================
+   1. 共通ベース設定（管理者UIと同期）
+   ========================================== */
 body {
-    background-color: #f2f2f2;
+    background-color: #F6F6F6;
+    /* 管理者側の背景色に統一 */
+    margin: 0;
     color: #333;
-    font-family: sans-serif;
+    font-family: 'Noto Sans JP', sans-serif;
 }
 
 .request-list {
     max-width: 1000px;
-    margin: 60px auto;
-    padding: 0 40px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    /* 管理者側のマージン・パディングに統一 */
 }
 
+/* タイトル：左の黒棒デザイン（管理者側のサイズに合わせる） */
 .request-list__title {
-    font-size: 26px;
+    font-size: 28px;
+    /* 26pxから28pxへ */
     font-weight: bold;
     margin-bottom: 40px;
     display: flex;
@@ -21,33 +28,42 @@ body {
 
 .request-list__title::before {
     content: "";
-    width: 6px;
+    width: 8px;
+    /* 6pxから8pxへ */
     height: 35px;
     background-color: #000;
     margin-right: 20px;
 }
 
-/* タブメニュー */
+/* ==========================================
+   2. タブメニュー（管理者UIと同期）
+   ========================================== */
 .request-list__tabs {
     display: flex;
     gap: 40px;
-    border-bottom: 1px solid #dcdcdc;
-    margin-bottom: 40px;
+    border-bottom: 1px solid #ddd;
+    /* 管理者側の線色へ */
+    margin-bottom: 30px;
     padding-left: 10px;
 }
 
 .tab-item {
     text-decoration: none;
-    color: #333;
+    color: #888;
+    /* ★選択されていない方はグレーにする */
     font-size: 18px;
     font-weight: bold;
     padding-bottom: 15px;
     position: relative;
+    display: inline-block;
+    transition: color 0.3s;
     cursor: pointer;
 }
 
+/* 選択中のタブ（activeクラス時） */
 .tab-item.active {
     color: #000;
+    /* ★選択されると黒になる */
 }
 
 .tab-item.active::after {
@@ -60,98 +76,58 @@ body {
     background-color: #000;
 }
 
-/* テーブル本体 */
+/* ==========================================
+   3. テーブルデザイン（管理者UIと同期）
+   ========================================== */
 .request-list__table {
     width: 100%;
-    table-layout: fixed;
-    /* 列幅固定に必須 */
     border-collapse: collapse;
-    background-color: #fff;
+    background: #fff;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
     overflow: hidden;
-}
-
-/* セルの共通設定 */
-.request-list__table th,
-.request-list__table td {
-    padding: 20px 15px;
-    /* 余白を詰めて横幅を確保 */
-    border-bottom: 1px solid #f2f2f2;
-    text-align: left;
-    font-size: 16px;
-    font-weight: bold;
-    vertical-align: middle;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    /* 管理者側の影の強さへ */
 }
 
 .request-list__table th {
-    color: #999;
+    background-color: #fff;
+    color: #888;
+    padding: 20px;
+    border-bottom: 2px solid #F6F6F6;
+    text-align: center;
+    /* スタッフ側も中央揃えを基本に */
+    font-weight: bold;
 }
 
 .request-list__table td {
+    padding: 20px;
+    border-bottom: 1px solid #F6F6F6;
+    text-align: center;
+    font-size: 18px;
+    /* 文字サイズを18pxへアップ */
+    font-weight: 500;
     color: #333;
 }
 
-/* --- 列幅の個別設定 --- */
-
-/* 1. 状態 */
-.request-list__table th:nth-child(1),
-.request-list__table td:nth-child(1) {
-    width: 100px;
-}
-
-/* 2. 名前 */
-.request-list__table th:nth-child(2),
-.request-list__table td:nth-child(2) {
-    width: 100px;
-}
-
-/* 3 & 5. 日付（絶対に1行にする） */
-.request-list__table th:nth-child(3),
-.request-list__table td:nth-child(3),
-.request-list__table th:nth-child(5),
-.request-list__table td:nth-child(5) {
-    width: 140px;
-    white-space: nowrap;
-    /* 改行禁止 */
-}
-
-/* 4. 申請理由（余った幅をすべて使う） */
+/* --- 列幅の個別設定 (スタッフ側の設定を継承しつつ調整) --- */
 .request-list__table th:nth-child(4),
 .request-list__table td:nth-child(4) {
-    width: auto;
+    text-align: left;
+    /* 申請理由だけ左寄せにすると読みやすい */
     word-break: break-all;
-    /* 長い場合のみここだけ改行を許可 */
 }
 
-/* 6. 詳細ボタン */
-.request-list__table th:nth-child(6),
-.request-list__table td:nth-child(6) {
-    width: 100px;
-    text-align: center;
-}
-
-/* 幅を少し広げました */
-
-/* --- 詳細リンクの装飾（ホバー復活） --- */
+/* --- 詳細リンク（管理者側のシンプルスタイルへ） --- */
 .request-list__table td a {
     color: #000;
-    text-decoration: none;
+    text-decoration: underline;
+    /* 管理者側の下線スタイル */
     font-weight: 800;
-    padding: 5px 15px;
-    /* ボタンらしく余白を追加 */
-    border-radius: 4px;
     transition: all 0.3s;
-    /* アニメーションを追加 */
-    display: inline-block;
-    /* paddingを効かせるために追加 */
 }
 
 .request-list__table td a:hover {
-    background-color: #aaaaaa;
-    /* ホバー時の背景色 */
-    color: #ffffff;
-    /* ホバー時の文字色 */
+    color: #aaaaaa;
     text-decoration: none;
 }
 

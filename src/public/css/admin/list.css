@@ -151,7 +151,7 @@ body {
 }
 
 /* --- 管理者：申請一覧 CSS --- */
-
+/* タイトル：左の黒棒デザイン（スタッフ側と統一） */
 body div.attendance-list h1.attendance-list__title {
     font-size: 28px;
     font-weight: bold;
@@ -159,57 +159,80 @@ body div.attendance-list h1.attendance-list__title {
     padding-left: 20px;
     margin-bottom: 30px;
     color: #000;
+    line-height: 1.2;
 }
 
+/* タブコンテナ：下線を引くベースライン */
 body div.attendance-list div.request-tabs {
     display: flex;
-    gap: 0;
+    gap: 40px;
+    /* 左のUIに合わせて間隔を広げました */
     margin-bottom: 30px;
     border-bottom: 1px solid #ddd;
+    padding-left: 10px;
 }
 
-/* リンクの青文字・下線を消す */
+/* タブアイテム：文字サイズ18px、太字、黒色を維持 */
 body div.attendance-list div.request-tabs a.tab-item {
     text-decoration: none;
-    color: #333;
-    padding: 10px 20px;
-    font-size: 16px;
+    color: #888;
+    /* 非選択時は少し薄くしてメリハリをつける */
+    padding-bottom: 15px;
+    /* 下線との距離 */
+    font-size: 18px;
+    /* 文字を大きく */
+    font-weight: bold;
+    /* 太字 */
     position: relative;
     display: inline-block;
+    transition: color 0.3s;
 }
 
-/* 選択中のタブ */
+/* 選択中のタブ：文字を真っ黒にする */
 body div.attendance-list div.request-tabs a.tab-item.is-active {
     color: #000;
-    font-weight: bold;
 }
 
-/* 選択中のみ出る太下線 */
+/* 選択中のタブの真下にだけ移動する黒い太線 */
 body div.attendance-list div.request-tabs a.tab-item.is-active::after {
     content: "";
     position: absolute;
     bottom: -1px;
+    /* 枠線とピッタリ重ねる */
     left: 0;
     width: 100%;
     height: 3px;
     background-color: #000;
 }
 
-/* テーブルスタイル */
+/* テーブルスタイル（背景白・影付き） */
 body div.attendance-list table.attendance-table {
     width: 100%;
     border-collapse: collapse;
     background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 body div.attendance-list table.attendance-table th {
-    color: #888;
+    color: #999;
     padding: 20px;
     border-bottom: 2px solid #F6F6F6;
+    text-align: center;
 }
 
+body div.attendance-list table.attendance-table td {
+    padding: 20px;
+    border-bottom: 1px solid #F6F6F6;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* 詳細リンク */
 body div.attendance-list table.attendance-table td a.detail-link {
     color: #000;
-    font-weight: bold;
+    font-weight: 800;
     text-decoration: underline;
 }
