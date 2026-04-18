@@ -7,7 +7,7 @@ use Carbon\Carbon;
 
 class Attendance extends Model
 {
-    protected $fillable = ['user_id', 'date', 'clock_in', 'clock_out', 'status'];
+    protected $fillable = ['user_id', 'date', 'clock_in', 'clock_out', 'status', 'remarks'];
 
     // リレーション：ユーザー
     public function user()

@@ -149,3 +149,23 @@ textarea {
 .pending-message {
     text-align: right;
 }
+
+/* 管理者詳細（PG09）専用のボタン定義 */
+.attendance-detail .form-actions .approve-btn.approved {
+    background-color: #6b6b6b;
+    color: #ffffff;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 18px;
+    cursor: not-allowed;
+    display: inline-block;
+}
+
+/* 承認待ちメッセージのスタイル */
+.attendance-detail .form-actions .pending-message {
+    color: #ff0000;
+    font-weight: bold;
+    margin-bottom: 10px;
+}

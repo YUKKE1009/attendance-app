@@ -64,14 +64,14 @@ Route::prefix('admin')->group(function () {
 
     // 【ログイン後のみアクセス可能】
     Route::middleware('auth:admin')->group(function () {
-
-        // PG08: 全スタッフの勤怠一覧
+        // 一覧
         Route::get('/attendance/list', [AdminAttendanceController::class, 'index'])->name('admin.attendance.list');
 
-        // PG09: 勤怠詳細画面
-        Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('admin.attendance.detail');
+        Route::get('/attendance/{id}', [AdminAttendanceController::class, 'show'])->name('admin.attendance.detail');
 
-        // ログアウト
+        // 修正ボタンを押した時の保存先
+        Route::patch('/attendance/{id}', [AdminAttendanceController::class, 'update'])->name('admin.attendance.update');
+        //　ログアウト
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('admin.logout');
     });
 });
