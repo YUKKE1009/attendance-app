@@ -8,6 +8,7 @@
 <div class="attendance-detail">
     <h1 class="attendance-detail__title">勤怠詳細（管理者）</h1>
 
+    {{-- 1. 修正用フォーム（PATCH） --}}
     <form action="{{ route('admin.attendance.update', $attendance->id) }}" method="POST">
         @csrf
         @method('PATCH')
@@ -27,7 +28,6 @@
             <tr>
                 <th>出勤・退勤</th>
                 <td>
-                    {{-- ★「承認待ち」または「承認済み」なら編集不可 --}}
                     @if($attendance->status == '承認待ち' || $attendance->status == '承認済み')
                     {{ substr($attendance->clock_in, 0, 5) }}
                     <span class="time-separator">〜</span>
@@ -43,12 +43,10 @@
                 </td>
             </tr>
 
-            {{-- 既存の休憩リスト --}}
             @foreach($attendance->rests as $index => $rest)
             <tr>
                 <th>休憩{{ $loop->iteration }}</th>
                 <td>
-                    {{-- ★「承認待ち」または「承認済み」なら編集不可 --}}
                     @if($attendance->status == '承認待ち' || $attendance->status == '承認済み')
                     {{ substr($rest->break_in, 0, 5) }}
                     <span class="time-separator">〜</span>
@@ -62,7 +60,6 @@
             </tr>
             @endforeach
 
-            {{-- 新規休憩の追加：ステータスが「未申請（nullなど）」の時のみ表示 --}}
             @if($attendance->status != '承認待ち' && $attendance->status != '承認済み')
             <tr>
                 <th>休憩{{ count($attendance->rests) + 1 }}</th>
@@ -70,9 +67,6 @@
                     <input type="text" name="new_rest_in" class="time-input" placeholder="00:00">
                     <span class="time-separator">〜</span>
                     <input type="text" name="new_rest_out" class="time-input" placeholder="00:00">
-                    @error('break_time')
-                    <p class="error-item">{{ $message }}</p>
-                    @enderror
                 </td>
             </tr>
             @endif
@@ -80,29 +74,34 @@
             <tr>
                 <th>備考</th>
                 <td>
-                    {{-- ★「承認待ち」または「承認済み」なら編集不可 --}}
                     @if($attendance->status == '承認待ち' || $attendance->status == '承認済み')
                     <div class="note-text">{{ $attendance->remarks }}</div>
                     @else
                     <textarea name="remarks" class="textarea-field">{{ old('remarks', $attendance->remarks) }}</textarea>
-                    @error('remarks')
-                    <p class="error-item">{{ $message }}</p>
-                    @enderror
                     @endif
                 </td>
             </tr>
         </table>
 
+        {{-- 通常時（修正可能）の時だけ「修正」ボタンを表示してフォームを閉じる --}}
+        @if($attendance->status != '承認待ち' && $attendance->status != '承認済み')
         <div class="form-actions">
-            @if($attendance->status == '承認待ち')
-            <p class="pending-message">*承認待ちのため修正はできません。</p>
-            @elseif($attendance->status == '承認済み')
-            {{-- ★「承認済み」の時はボタンも無効化 --}}
-            <button type="button" class="approve-btn approved" disabled>承認済み</button>
-            @else
             <button type="submit" class="update-btn">修正</button>
-            @endif
         </div>
-    </form>
+        @endif
+    </form> {{-- ←ここで修正フォームを閉じる！ --}}
+
+    {{-- 2. 承認・承認済みエリア（修正フォームの外側に置く） --}}
+    <div class="form-actions">
+        @if($attendance->status == '承認待ち')
+        <form action="{{ route('admin.attendance.approve', ['id' => $attendance->id]) }}" method="POST">
+            @csrf
+            <button type="submit" class="approve-btn">承認</button>
+        </form>
+        @elseif($attendance->status == '承認済み')
+        <button type="button" class="approve-btn approved" disabled>承認済み</button>
+        @endif
+    </div>
+
 </div>
 @endsection

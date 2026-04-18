@@ -90,9 +90,14 @@ Route::prefix('admin')->group(function () {
         Route::get('/stamp_correction_request/list', [CorrectionController::class, 'index'])
             ->name('admin.correction.list');
 
-        // （参考）詳細画面など
+        // PG13相当: 申請詳細画面
         Route::get('/stamp_correction_request/detail/{id}', [CorrectionController::class, 'show'])
             ->name('admin.correction.detail');
+
+        // PG13 承認処理本体
+        // POSTで受け取り、CorrectionControllerのapproveメソッドを呼び出す
+        Route::post('/stamp_correction_request/approve/{id}', [CorrectionController::class, 'approve'])
+            ->name('admin.attendance.approve');
 
         // ログアウト
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('admin.logout');

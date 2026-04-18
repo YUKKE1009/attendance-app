@@ -169,3 +169,54 @@ textarea {
     font-weight: bold;
     margin-bottom: 10px;
 }
+
+/* 修正ボタンと承認ボタンの共通親要素 */
+.form-actions {
+    margin-top: 40px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* 承認ボタン（管理者用：画像17:28:38を再現） */
+.approve-btn {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 12px 80px;
+    /* 横長にするためのパディング */
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 5px;
+    /* ほどよい角丸 */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.approve-btn:hover {
+    background-color: #333;
+    /* ホバー時に少し明るく */
+}
+
+/* 承認済み（グレーアウト） */
+.approve-btn.approved {
+    background-color: #888;
+    color: #fff;
+    cursor: not-allowed;
+    padding: 12px 80px;
+}
+
+/* 備考欄の中のテキスト表示（編集不可時） */
+.note-text {
+    width: 100%;
+    max-width: 480px;
+    min-height: 80px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    /* 入力不可とわかるように薄いグレー */
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    white-space: pre-wrap;
+    /* 改行を反映 */
+}

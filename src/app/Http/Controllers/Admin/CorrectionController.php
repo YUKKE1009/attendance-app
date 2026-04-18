@@ -37,4 +37,21 @@ class CorrectionController extends Controller
         return view('admin.detail', compact('attendance'));
     }
 
+    /**
+     * PG13: 修正申請の承認処理
+     */
+    public function approve(Request $request, $id)
+    {
+        // 1. 該当の勤怠データを取得
+        $attendance = Attendance::findOrFail($id);
+
+        // 2. ステータスを「承認済み」に更新
+        $attendance->update([
+            'status' => '承認済み'
+        ]);
+
+        // 3. 申請一覧画面へリダイレクト（メッセージ付き）
+        return redirect()->route('admin.correction.list')->with('message', '承認が完了しました');
+    }
+
 }
