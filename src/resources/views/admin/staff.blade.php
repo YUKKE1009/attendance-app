@@ -23,7 +23,6 @@
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
                     <td>
-                        {{-- まだルートがない場合は '#' にしておいてください --}}
                         <a href="{{ route('admin.staff.attendance', ['id' => $user->id]) }}" class="detail-link">詳細</a>
                     </td>
                 </tr>

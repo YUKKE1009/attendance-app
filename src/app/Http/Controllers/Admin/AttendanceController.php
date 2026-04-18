@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
+use App\Models\User;
 use Carbon\Carbon;
 use App\Http\Requests\Admin\AttendanceUpdateRequest;
 
@@ -63,5 +64,36 @@ class AttendanceController extends Controller
         // 4. 一覧画面へ戻る
         return redirect()->route('admin.attendance.list', ['date' => $attendance->date])
             ->with('success', '勤怠情報を修正しました');
+    }
+
+    public function staff(Request $request, $id)
+    {
+        // 1. 対象のスタッフ情報を取得
+        $user = User::findOrFail($id);
+
+        // 2. 表示する月を取得（なければ今月）
+        $month = $request->query('month', Carbon::now()->format('Y-m'));
+        $displayDate = Carbon::parse($month . '-01');
+
+        // 3. 前月・翌月のリンク用文字列
+        $prevMonth = $displayDate->copy()->subMonth()->format('Y-m');
+        $nextMonth = $displayDate->copy()->addMonth()->format('Y-m');
+
+        // 4. そのスタッフの、指定された月の勤怠データを取得
+        $attendances = Attendance::with('rests')
+            ->where('user_id', $id)
+            ->where('date', 'like', "$month%")
+            ->orderBy('date', 'asc')
+            ->get();
+
+        // 5. PG11用のブレードを表示
+        return view('admin.staff_attendance', compact(
+            'user',
+            'attendances',
+            'month',
+            'displayDate',
+            'prevMonth',
+            'nextMonth'
+        ));
     }
 }

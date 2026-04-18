@@ -27,10 +27,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* 両端と中央に配置 */
     background: #fff;
     padding: 15px 40px;
-    /* 左右の余白を多めに */
     border-radius: 10px;
     margin-bottom: 30px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -41,6 +39,7 @@ body {
     color: #888;
     font-size: 18px;
     font-weight: bold;
+    transition: color 0.3s;
 }
 
 .nav-btn:hover {
@@ -72,14 +71,12 @@ body {
     padding: 20px;
     border-bottom: 2px solid #F6F6F6;
     text-align: center;
-    /* ヘッダー中央寄せ */
 }
 
 .attendance-table td {
     padding: 20px;
     border-bottom: 1px solid #F6F6F6;
     text-align: center;
-    /* データ中央寄せ */
     font-size: 18px;
     font-weight: 500;
 }
@@ -92,13 +89,13 @@ body {
     padding: 5px 10px;
     border-radius: 4px;
     transition: all 0.3s;
-    }
+}
 
 .detail-link:hover {
     background-color: #aaaaaa;
     color: #ffffff;
     text-decoration: none;
-    }
+}
 
 /* レスポンシブ */
 @media (max-width: 768px) {
@@ -111,19 +108,6 @@ body {
     }
 }
 
-/* 土曜日の行を薄い青に */
-.is-saturday {
-    color: #0000ff;
-    /* 文字色を青に */
-}
-
-/* 日曜日の行を薄い赤に */
-.is-sunday {
-    color: #ff0000;
-    /* 文字色を赤に */
-}
-
-/* データがない行の背景を少し変える場合はこちら */
-tr:not(:has(td:nth-child(2):not(:empty))) {
-    background-color: #fafafa;
-}
+/* ★修正：土日の色指定（.is-saturday, .is-sunday）を削除しました。
+   また、データがない行の背景変更も、スクショに合わせて削除またはコメントアウトしています。
+*/

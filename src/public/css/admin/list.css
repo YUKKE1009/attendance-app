@@ -1,4 +1,6 @@
-/* 全体の背景 */
+/* ==========================================
+   1. 共通ベース設定（全画面共通）
+   ========================================== */
 body {
     background-color: #F6F6F6;
     margin: 0;
@@ -6,27 +8,36 @@ body {
     font-family: 'Noto Sans JP', sans-serif;
 }
 
-.container {
+/* メインコンテナ */
+.container,
+.attendance-list {
     max-width: 1000px;
     margin: 0 auto;
     padding: 40px 20px;
 }
 
-/* ページタイトル*/
-.page-title {
+/* タイトル：左の黒棒デザイン */
+.page-title,
+.attendance-list__title {
     font-size: 28px;
     font-weight: bold;
     border-left: 8px solid #000;
     padding-left: 20px;
     margin-bottom: 40px;
     text-align: left;
+    display: inline-block;
+    line-height: 1.2;
 }
 
-/* 日付ナビゲーションバー*/
+/* ==========================================
+   2. 年月ナビゲーション (PG11: 両端配置)
+   ========================================== */
+.attendance-list__nav,
 .date-nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    /* 両端に寄せる */
     background: #fff;
     padding: 15px 40px;
     border-radius: 10px;
@@ -39,6 +50,8 @@ body {
     color: #888;
     font-size: 18px;
     font-weight: bold;
+    min-width: 80px;
+    /* ボタンの押しやすさ確保 */
     transition: color 0.3s;
 }
 
@@ -46,25 +59,33 @@ body {
     color: #000;
 }
 
+/* 右側の翌月ボタンだけ右寄せ */
+.nav-btn:last-child {
+    text-align: right;
+}
+
+.current-month,
 .date-display {
+    font-size: 24px;
+    font-weight: bold;
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 24px;
-    font-weight: bold;
+    flex-grow: 1;
+    justify-content: center;
+    /* 日付は中央 */
 }
 
-/* 勤怠テーブルエリア */
-.table-wrapper {
-    background-color: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
+/* ==========================================
+   3. テーブルデザイン
+   ========================================== */
 .attendance-table {
     width: 100%;
     border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .attendance-table th {
@@ -84,7 +105,7 @@ body {
     font-weight: 500;
 }
 
-/* 詳細リンク*/
+/* 詳細リンク */
 .detail-link {
     color: #000;
     text-decoration: none;
@@ -97,59 +118,34 @@ body {
 .detail-link:hover {
     background-color: #aaaaaa;
     color: #ffffff;
-    text-decoration: none;
 }
 
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-    .date-nav {
-        padding: 15px 20px;
-    }
-
-    .date-display {
-        font-size: 18px;
-    }
-}
-
-/* --- スタッフ一覧用の追加設定 --- */
-
-/* スタッフ一覧テーブルの列幅固定 */
-.staff-list-table {
-    table-layout: fixed;
-}
-
-.staff-list-table th:nth-child(1),
-.staff-list-table td:nth-child(1) {
-    width: 25%;
-}
-
-/* 名前 */
-
-.staff-list-table th:nth-child(2),
-.staff-list-table td:nth-child(2) {
-    width: 50%;
-}
-
-/* メールアドレス */
-
-.staff-list-table th:nth-child(3),
-.staff-list-table td:nth-child(3) {
-    width: 25%;
-    text-align: center;
-}
-
-/* 月次勤怠 */
-
-/* テキストの配置（スクショに合わせて左寄せ） */
-.staff-list-table td,
-.staff-list-table th {
+/* ==========================================
+   4. 特定画面（スタッフ一覧など）用
+   ========================================== */
+.staff-list-table th,
+.staff-list-table td {
     text-align: left;
     padding-left: 40px;
 }
 
-/* 詳細ボタンの列だけは中央 */
-.staff-list-table td:nth-child(3),
-.staff-list-table th:nth-child(3) {
+/* 詳細ボタン列だけ中央 */
+.staff-list-table th:last-child,
+.staff-list-table td:last-child {
     text-align: center;
     padding-left: 0;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+
+    .attendance-list__nav,
+    .date-nav {
+        padding: 15px 20px;
+    }
+
+    .current-month,
+    .date-display {
+        font-size: 18px;
+    }
 }
