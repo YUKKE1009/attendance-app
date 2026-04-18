@@ -171,11 +171,20 @@ class AttendanceController extends Controller
     public function requestList(Request $request)
     {
         $userId = Auth::id();
+
+        // クエリパラメータから status を取得（デフォルトは pending:承認待ち）
+        $status = $request->query('status', 'pending');
+
+        // 状態をDBの値（承認待ち or 承認済み）に変換
+        // ※もしDBに 1 or 2 で入れている場合はここを数字に変更してください
+        $statusValue = ($status === 'approved') ? '承認済み' : '承認待ち';
+
         $attendances = Attendance::where('user_id', $userId)
-            ->whereIn('status', ['承認待ち', '承認済み'])
+            ->where('status', $statusValue)
+            ->orderBy('updated_at', 'desc')
             ->get();
 
-        // views/request/list.blade.php を見に行くように修正
-        return view('request.list', compact('attendances'));
+        // status変数も一緒にViewに渡すことで、タブのactive判定に使えます
+        return view('request.list', compact('attendances', 'status'));
     }
 }

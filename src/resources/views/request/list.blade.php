@@ -9,8 +9,15 @@
     <h1 class="request-list__title">申請一覧</h1>
 
     <div class="request-list__tabs">
-        <a href="#" class="tab-item active">承認待ち</a>
-        <a href="#" class="tab-item">承認済み</a>
+        {{-- hrefをルート＋パラメータに変更し、$statusでactiveクラスを切り替える --}}
+        <a href="{{ route('request.list', ['status' => 'pending']) }}"
+            class="tab-item {{ $status === 'pending' ? 'active' : '' }}">
+            承認待ち
+        </a>
+        <a href="{{ route('request.list', ['status' => 'approved']) }}"
+            class="tab-item {{ $status === 'approved' ? 'active' : '' }}">
+            承認済み
+        </a>
     </div>
 
     <table class="request-list__table">
@@ -25,9 +32,13 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($attendances as $attendance)
+            @forelse($attendances as $attendance)
             <tr>
                 <td>
+                    {{--
+                      DBのstatusが「承認待ち」「承認済み」という文字列で入っている想定 
+                      もし数字(1, 2)で管理している場合は、ここを数値判定に書き換えてください
+                    --}}
                     <span class="status-badge {{ $attendance->status === '承認待ち' ? 'pending' : 'approved' }}">
                         {{ $attendance->status }}
                     </span>
@@ -37,11 +48,14 @@
                 <td>{{ $attendance->remarks }}</td>
                 <td>{{ $attendance->updated_at->format('Y/m/d') }}</td>
                 <td>
-                    {{-- 修正申請時の詳細画面へ戻るリンク --}}
-                    <a href="{{ route('attendance.detail', $attendance->id) }}">詳細</a>
+                    <a href="{{ route('attendance.detail', $attendance->id) }}" class="detail-link">詳細</a>
                 </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 20px;">該当する申請はありません。</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 </div>
