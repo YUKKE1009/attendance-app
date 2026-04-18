@@ -81,11 +81,14 @@
                 <th>備考</th>
                 <td>
                     @if($isPending)
-                    <div class="note-text">{{ $attendance->note }}</div>
+                    {{-- 1. $attendance->note を remarks に変更 --}}
+                    <div class="note-text">{{ $attendance->remarks }}</div>
                     @else
-                    <textarea name="note">{{ old('note', $attendance->note) }}</textarea>
-                    {{-- FN029-4 --}}
-                    @error('note')
+                    {{-- 2. name="note" を name="remarks" に、oldの中身も remarks に変更 --}}
+                    <textarea name="remarks">{{ old('remarks', $attendance->remarks) }}</textarea>
+
+                    {{-- 3. @error('note') を @error('remarks') に変更 --}}
+                    @error('remarks')
                     <p class="error-item">{{ $message }}</p>
                     @enderror
                     @endif

@@ -18,7 +18,7 @@ class AttendanceUpdateRequest extends FormRequest
             'clock_out' => 'required',
             'rests.*.break_in'  => 'nullable',
             'rests.*.break_out' => 'nullable',
-            'note'      => 'required',
+            'remarks'      => 'required',
         ];
     }
 
@@ -74,7 +74,7 @@ class AttendanceUpdateRequest extends FormRequest
     public function messages()
     {
         return [
-            'note.required' => '備考を記入してください', // FN029-4
+            'remarks.required' => '備考を記入してください', // FN029-4
         ];
     }
 }

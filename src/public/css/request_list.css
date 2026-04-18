@@ -1,18 +1,16 @@
-/* 全体の背景（detail.cssと統一） */
+/* 全体の背景 */
 body {
     background-color: #f2f2f2;
     color: #333;
     font-family: sans-serif;
 }
 
-/* 全体コンテナ */
 .request-list {
     max-width: 1000px;
     margin: 60px auto;
     padding: 0 40px;
 }
 
-/* タイトル（detail.cssの装飾を再現） */
 .request-list__title {
     font-size: 26px;
     font-weight: bold;
@@ -23,14 +21,13 @@ body {
 
 .request-list__title::before {
     content: "";
-    display: inline-block;
     width: 6px;
     height: 35px;
     background-color: #000;
     margin-right: 20px;
 }
 
-/* タブメニュー（UI画像の細い線を再現） */
+/* タブメニュー */
 .request-list__tabs {
     display: flex;
     gap: 40px;
@@ -49,7 +46,6 @@ body {
     cursor: pointer;
 }
 
-/* 選択中のタブ（下線） */
 .tab-item.active {
     color: #000;
 }
@@ -64,55 +60,101 @@ body {
     background-color: #000;
 }
 
-/* 白いカード部分（detail-tableと統一） */
+/* テーブル本体 */
 .request-list__table {
     width: 100%;
+    table-layout: fixed;
+    /* 列幅固定に必須 */
     border-collapse: collapse;
     background-color: #fff;
     border-radius: 10px;
-    border: 1px solid #e0e0e0;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
     overflow: hidden;
 }
 
+/* セルの共通設定 */
 .request-list__table th,
 .request-list__table td {
-    padding: 25px 30px;
+    padding: 20px 15px;
+    /* 余白を詰めて横幅を確保 */
     border-bottom: 1px solid #f2f2f2;
     text-align: left;
+    font-size: 16px;
+    font-weight: bold;
+    vertical-align: middle;
 }
 
-/* ヘッダーの文字色 */
 .request-list__table th {
     color: #999;
-    font-size: 16px;
-    font-weight: bold;
 }
 
-/* データの文字色 */
 .request-list__table td {
     color: #333;
-    font-size: 16px;
-    font-weight: bold;
 }
 
-/* 詳細リンク */
+/* --- 列幅の個別設定 --- */
+
+/* 1. 状態 */
+.request-list__table th:nth-child(1),
+.request-list__table td:nth-child(1) {
+    width: 100px;
+}
+
+/* 2. 名前 */
+.request-list__table th:nth-child(2),
+.request-list__table td:nth-child(2) {
+    width: 100px;
+}
+
+/* 3 & 5. 日付（絶対に1行にする） */
+.request-list__table th:nth-child(3),
+.request-list__table td:nth-child(3),
+.request-list__table th:nth-child(5),
+.request-list__table td:nth-child(5) {
+    width: 140px;
+    white-space: nowrap;
+    /* 改行禁止 */
+}
+
+/* 4. 申請理由（余った幅をすべて使う） */
+.request-list__table th:nth-child(4),
+.request-list__table td:nth-child(4) {
+    width: auto;
+    word-break: break-all;
+    /* 長い場合のみここだけ改行を許可 */
+}
+
+/* 6. 詳細ボタン */
+.request-list__table th:nth-child(6),
+.request-list__table td:nth-child(6) {
+    width: 100px;
+    text-align: center;
+}
+
+/* 幅を少し広げました */
+
+/* --- 詳細リンクの装飾（ホバー復活） --- */
 .request-list__table td a {
     color: #000;
     text-decoration: none;
     font-weight: 800;
-    padding: 5px 10px;
+    padding: 5px 15px;
+    /* ボタンらしく余白を追加 */
     border-radius: 4px;
     transition: all 0.3s;
+    /* アニメーションを追加 */
+    display: inline-block;
+    /* paddingを効かせるために追加 */
 }
 
 .request-list__table td a:hover {
     background-color: #aaaaaa;
+    /* ホバー時の背景色 */
     color: #ffffff;
+    /* ホバー時の文字色 */
     text-decoration: none;
 }
 
-/* 最後の下線を消す */
 .request-list__table tr:last-child td {
     border-bottom: none;
 }

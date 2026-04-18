@@ -32,13 +32,6 @@
             $startOfMonth = \Carbon\Carbon::parse($month)->startOfMonth();
             $endOfMonth = \Carbon\Carbon::parse($month)->endOfMonth();
             $weeks = ['日', '月', '火', '水', '木', '金', '土'];
-
-            // 【新設】"26:00" などの文字列を「分」に変換する関数
-            $timeToMinutes = function($time) {
-            if (!$time) return 0;
-            $parts = explode(':', $time);
-            return ((int)$parts[0] * 60) + (int)($parts[1] ?? 0);
-            };
             @endphp
 
             @for ($date = $startOfMonth->copy(); $date->lte($endOfMonth); $date->addDay())
@@ -56,48 +49,45 @@
 
                 @if ($attendance)
                 @php
-                // 1. 休憩時間の合計計算（Carbonを使わず分単位で計算）
+                // 1. 休憩時間の合計（分）を計算
                 $totalRestMinutes = 0;
                 foreach ($attendance->rests as $rest) {
                 if ($rest->break_in && $rest->break_out) {
-                $inMin = $timeToMinutes($rest->break_in);
-                $outMin = $timeToMinutes($rest->break_out);
-                $totalRestMinutes += ($outMin - $inMin);
+                $in = \Carbon\Carbon::parse($rest->break_in);
+                $out = \Carbon\Carbon::parse($rest->break_out);
+                $totalRestMinutes += $in->diffInMinutes($out);
                 }
                 }
+                // 休憩時間を H:i 形式に変換
                 $restTimeDisplay = sprintf('%d:%02d', floor($totalRestMinutes / 60), $totalRestMinutes % 60);
 
-                // 2. 勤務合計の計算（日跨ぎ26:00等に対応）
+                // 2. 勤務合計（実労働時間）の計算
                 $workTimeDisplay = '';
                 if ($attendance->clock_in && $attendance->clock_out) {
-                $startMin = $timeToMinutes($attendance->clock_in);
-                $endMin = $timeToMinutes($attendance->clock_out);
+                $start = \Carbon\Carbon::parse($attendance->clock_in);
+                $end = \Carbon\Carbon::parse($attendance->clock_out);
 
-                // 実労働時間 = (退勤分 - 出勤分) - 休憩分
-                $workingMinutes = ($endMin - $startMin) - $totalRestMinutes;
+                // (退勤 - 出勤) の総分数から休憩分数を引く
+                $workingMinutes = $start->diffInMinutes($end) - $totalRestMinutes;
+                $workTimeDisplay = sprintf('%d:%02d', floor($workingMinutes / 60), $workingMinutes % 60);
+                }
+                @endphp
 
-                // マイナスにならないようにガード
-                if ($workingMinutes < 0) $workingMinutes=0;
-
-                    $workTimeDisplay=sprintf('%d:%02d', floor($workingMinutes / 60), $workingMinutes % 60);
-                    }
-                    @endphp
-
-                    <td>{{ substr($attendance->clock_in, 0, 5) }}</td>
-                    <td>{{ $attendance->clock_out ? substr($attendance->clock_out, 0, 5) : '' }}</td>
-                    <td>{{ $restTimeDisplay }}</td>
-                    <td>{{ $workTimeDisplay }}</td>
-                    <td>
-                        <a href="{{ route('attendance.detail', ['id' => $attendance->id]) }}" class="detail-link">詳細</a>
-                    </td>
-                    @else
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    @endif
+                <td>{{ substr($attendance->clock_in, 0, 5) }}</td>
+                <td>{{ $attendance->clock_out ? substr($attendance->clock_out, 0, 5) : '' }}</td>
+                <td>{{ $restTimeDisplay }}</td>
+                <td>{{ $workTimeDisplay }}</td>
+                <td>
+                    <a href="{{ route('attendance.detail', ['id' => $attendance->id]) }}" class="detail-link">詳細</a>
+                </td>
+                @else
+                <td></td> {{-- 出勤 --}}
+                <td></td> {{-- 退勤 --}}
+                <td></td> {{-- 休憩 --}}
+                <td></td> {{-- 合計 --}}
+                <td></td> {{-- 詳細 --}}
+                {{-- 合計で6列（日付の列は最初にあるので、空欄は5つ追加） --}}
+                @endif
             </tr>
             @endfor
         </tbody>

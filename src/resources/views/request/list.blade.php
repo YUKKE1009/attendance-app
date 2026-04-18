@@ -34,7 +34,7 @@
                 </td>
                 <td>{{ $attendance->user->name }}</td>
                 <td>{{ \Carbon\Carbon::parse($attendance->date)->format('Y/m/d') }}</td>
-                <td>{{ $attendance->note }}</td>
+                <td>{{ $attendance->remarks }}</td>
                 <td>{{ $attendance->updated_at->format('Y/m/d') }}</td>
                 <td>
                     {{-- 修正申請時の詳細画面へ戻るリンク --}}

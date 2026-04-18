@@ -141,7 +141,7 @@ class AttendanceController extends Controller
         $attendance->update([
             'clock_in'  => $request->clock_in,
             'clock_out' => $request->clock_out,
-            'note'      => $request->note,
+            'remarks'   => $request->remarks,
             'status'    => '承認待ち',
         ]);
 
