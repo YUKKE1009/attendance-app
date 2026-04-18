@@ -4,26 +4,37 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\CorrectionRequest;
+// スタッフ側と同じモデルを使う
+use App\Models\Attendance;
 
 class CorrectionController extends Controller
 {
     public function index(Request $request)
     {
-        // タブの状態を取得（デフォルトは pending）
+        // 1. タブの状態を取得（デフォルトは pending）
         $status = $request->query('status', 'pending');
 
-        // 修正申請をユーザー情報と一緒に取得
-        $query = CorrectionRequest::with('user');
+        // 2. スタッフ側のロジックに合わせて表示する文字列を決定
+        $statusValue = ($status === 'approved') ? '承認済み' : '承認待ち';
 
-        if ($status === 'approved') {
-            // 2:承認済み
-            $requests = $query->where('status', 2)->get();
-        } else {
-            // 1:承認待ち
-            $requests = $query->where('status', 1)->get();
-        }
+        // 3. 管理者なので user_id の絞り込みはせず、全ユーザーのデータを取得
+        // スタッフ側と同じく Attendance モデルから取得
+        $requests = Attendance::with('user')
+            ->where('status', $statusValue)
+            ->orderBy('updated_at', 'desc')
+            ->get();
 
         return view('admin.request', compact('requests', 'status'));
     }
+
+    public function show($id)
+    {
+        // 申請データ（Attendance）を取得
+        $attendance = Attendance::with(['rests', 'user'])->findOrFail($id);
+
+        // PG09で作成済みの「管理者用詳細画面」を表示
+        // viewのパスは resources/views/admin/detail.blade.php なので 'admin.detail'
+        return view('admin.detail', compact('attendance'));
+    }
+
 }

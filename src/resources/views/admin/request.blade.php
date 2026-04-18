@@ -37,7 +37,7 @@
                     <td>{{ $status === 'approved' ? '承認済み' : '承認待ち' }}</td>
                     <td>{{ $req->user->name }}</td>
                     <td>{{ \Carbon\Carbon::parse($req->target_date)->format('Y/m/d') }}</td>
-                    <td>{{ $req->remark }}</td>
+                    <td>{{ $req->remarks }}</td>
                     <td>{{ \Carbon\Carbon::parse($req->created_at)->format('Y/m/d') }}</td>
                     <td>
                         <a href="{{ route('admin.correction.detail', ['id' => $req->id]) }}" class="detail-link">詳細</a>
