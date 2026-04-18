@@ -9,7 +9,7 @@
     <div class="auth-card">
         <h2 class="auth-card__title">管理者ログイン</h2>
 
-        <form class="auth-form" action="{{ url('/admin/login') }}" method="POST">
+        <form class="auth-form" action="{{ url('/admin/login') }}" method="POST" novalidate>
             @csrf
             <div class="form__group">
                 <label class="form__label" for="email">メールアドレス</label>

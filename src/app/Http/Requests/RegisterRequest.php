@@ -37,6 +37,7 @@ class RegisterRequest extends FormRequest
             'password.required' => 'パスワードを入力してください',
             'password.min' => 'パスワードは8文字以上で入力してください',
             'password.confirmed' => 'パスワードと一致しません',
+            'email.unique' => 'こちらのメールアドレスは既に登録されています',
         ];
     }
 }
