@@ -5,6 +5,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Admin\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\CorrectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +85,14 @@ Route::prefix('admin')->group(function () {
 
         // PG10: スタッフ一覧
         Route::get('/staff/list', [StaffController::class, 'index'])->name('admin.staff.list');
+
+        // PG12: 申請一覧画面
+        Route::get('/stamp_correction_request/list', [CorrectionController::class, 'index'])
+            ->name('admin.correction.list');
+
+        // （参考）詳細画面など
+        Route::get('/stamp_correction_request/detail/{id}', [CorrectionController::class, 'show'])
+            ->name('admin.correction.detail');
 
         // ログアウト
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('admin.logout');

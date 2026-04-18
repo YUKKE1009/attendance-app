@@ -149,3 +149,67 @@ body {
         font-size: 18px;
     }
 }
+
+/* --- 管理者：申請一覧 CSS --- */
+
+body div.attendance-list h1.attendance-list__title {
+    font-size: 28px;
+    font-weight: bold;
+    border-left: 8px solid #000;
+    padding-left: 20px;
+    margin-bottom: 30px;
+    color: #000;
+}
+
+body div.attendance-list div.request-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* リンクの青文字・下線を消す */
+body div.attendance-list div.request-tabs a.tab-item {
+    text-decoration: none;
+    color: #333;
+    padding: 10px 20px;
+    font-size: 16px;
+    position: relative;
+    display: inline-block;
+}
+
+/* 選択中のタブ */
+body div.attendance-list div.request-tabs a.tab-item.is-active {
+    color: #000;
+    font-weight: bold;
+}
+
+/* 選択中のみ出る太下線 */
+body div.attendance-list div.request-tabs a.tab-item.is-active::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #000;
+}
+
+/* テーブルスタイル */
+body div.attendance-list table.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+body div.attendance-list table.attendance-table th {
+    color: #888;
+    padding: 20px;
+    border-bottom: 2px solid #F6F6F6;
+}
+
+body div.attendance-list table.attendance-table td a.detail-link {
+    color: #000;
+    font-weight: bold;
+    text-decoration: underline;
+}
