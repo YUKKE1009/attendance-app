@@ -210,13 +210,10 @@ textarea {
     width: 100%;
     max-width: 480px;
     min-height: 80px;
-    padding: 15px;
-    background-color: #f9f9f9;
-    /* 入力不可とわかるように薄いグレー */
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
+    padding: 15px 0;
+    background-color: transparent;
+    border: none;
     font-size: 16px;
     font-weight: bold;
     white-space: pre-wrap;
-    /* 改行を反映 */
 }
