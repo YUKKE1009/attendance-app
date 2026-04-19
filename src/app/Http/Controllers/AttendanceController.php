@@ -151,40 +151,55 @@ class AttendanceController extends Controller
     {
         $attendance = Attendance::findOrFail($id);
 
+        // 秒補完のロジック
         $clockIn = $request->clock_in;
-        if ($clockIn && strlen($clockIn) === 5) {
-            $clockIn .= ':00';
-        }
+        if ($clockIn && strlen($clockIn) === 5) $clockIn .= ':00';
 
         $clockOut = $request->clock_out;
-        if ($clockOut && strlen($clockOut) === 5) {
-            $clockOut .= ':00';
-        }
+        if ($clockOut && strlen($clockOut) === 5) $clockOut .= ':00';
 
         // 1. 勤怠本体の更新とステータスを「承認待ち」に変更
         $attendance->update([
-            'clock_in'  => $request->clock_in,
-            'clock_out' => $request->clock_out,
+            'clock_in'  => $clockIn, // 補完後の変数を使う
+            'clock_out' => $clockOut,
             'remarks'   => $request->remarks,
             'status'    => '承認待ち',
         ]);
 
-        // 2. 既存の休憩データの更新
+        // 2. 既存の休憩データの更新（空なら削除・スキップ）
         if ($request->has('rests')) {
             foreach ($request->rests as $restId => $restData) {
+                $in = $restData['break_in'];
+                $out = $restData['break_out'];
+
+                // ★【両方ブランク】ならDBから削除
+                if (empty($in) && empty($out)) {
+                    Rest::destroy($restId);
+                    continue;
+                }
+
+                // ★【片方だけ入力】なら更新せずに無視（不完全なデータを防ぐ）
+                if (empty($in) || empty($out)) {
+                    continue;
+                }
+
+                // 両方入力されている場合のみ更新（秒補完も考慮）
                 Rest::where('id', $restId)->update([
-                    'break_in'  => $restData['break_in'],
-                    'break_out' => $restData['break_out'],
+                    'break_in'  => (strlen($in) === 5) ? $in . ':00' : $in,
+                    'break_out' => (strlen($out) === 5) ? $out . ':00' : $out,
                 ]);
             }
         }
 
-        // 3. 新規追加分の休憩保存
-        if ($request->new_rest_in && $request->new_rest_out) {
+        // 3. 新規追加分の休憩保存（両方入力されている時だけ保存）
+        if (!empty($request->new_rest_in) && !empty($request->new_rest_out)) {
+            $newIn = $request->new_rest_in;
+            $newOut = $request->new_rest_out;
+
             Rest::create([
                 'attendance_id' => $attendance->id,
-                'break_in'      => $request->new_rest_in,
-                'break_out'     => $request->new_rest_out,
+                'break_in'      => (strlen($newIn) === 5) ? $newIn . ':00' : $newIn,
+                'break_out'     => (strlen($newOut) === 5) ? $newOut . ':00' : $newOut,
             ]);
         }
 
