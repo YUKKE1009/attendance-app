@@ -82,9 +82,7 @@ body {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    /* 管理者と同じ軽い影 */
     table-layout: fixed;
-    /* 列幅を固定して安定させる */
 }
 
 .request-list__table th {
@@ -161,4 +159,12 @@ body {
 
 .request-list__table tr:last-child td {
     border-bottom: none;
+}
+
+.no-data {
+    text-align: center;
+    padding: 40px 20px;
+    color: #000;
+    background-color: #fafafa;
+    font-weight: bold;
 }

@@ -45,7 +45,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 20px;">申請はありません。</td>
+                    <td colspan="6" class="no-data">該当する申請はありません。</td>
                 </tr>
                 @endforelse
             </tbody>
