@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="attendance-list">
-    <h1 class="attendance-list__title">申請一覧</h1>
+    <h1 class="attendance-list__title">申請一覧(管理者)</h1>
 
     <div class="request-tabs">
         <a href="{{ route('admin.correction.list', ['status' => 'pending']) }}"

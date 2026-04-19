@@ -49,27 +49,53 @@
 
                 @if ($attendance)
                 @php
-                // 1. 休憩時間の合計（分）を計算
+                $attendance = $attendances->firstWhere('date', $date->format('Y-m-d'));
+                $dayOfWeek = $weeks[$date->dayOfWeek];
+
+                $rowClass = '';
+                if ($date->dayOfWeek == 0) $rowClass = 'is-sunday';
+                if ($date->dayOfWeek == 6) $rowClass = 'is-saturday';
+
+                // --- ここから計算ロジック修正 ---
                 $totalRestMinutes = 0;
+                $workTimeDisplay = '';
+                $restTimeDisplay = '';
+
+                if ($attendance) {
+                // 時間文字列をCarbonが読める形式(00-23時)に変換する関数
+                $parseTime = function($timeString) {
+                if (!$timeString) return null;
+                $parts = explode(':', $timeString);
+                $hour = (int)$parts[0];
+                $minute = $parts[1];
+                $second = $parts[2] ?? '00';
+
+                // 24時以降（25:00など）を翌日の01:00として扱う
+                if ($hour >= 24) {
+                $hour = $hour - 24;
+                return \Carbon\Carbon::today()->addDay()->setTime($hour, $minute, $second);
+                }
+                return \Carbon\Carbon::today()->setTime($hour, $minute, $second);
+                };
+
+                // 1. 休憩時間の合計計算
                 foreach ($attendance->rests as $rest) {
                 if ($rest->break_in && $rest->break_out) {
-                $in = \Carbon\Carbon::parse($rest->break_in);
-                $out = \Carbon\Carbon::parse($rest->break_out);
+                $in = $parseTime($rest->break_in);
+                $out = $parseTime($rest->break_out);
                 $totalRestMinutes += $in->diffInMinutes($out);
                 }
                 }
-                // 休憩時間を H:i 形式に変換
                 $restTimeDisplay = sprintf('%d:%02d', floor($totalRestMinutes / 60), $totalRestMinutes % 60);
 
                 // 2. 勤務合計（実労働時間）の計算
-                $workTimeDisplay = '';
                 if ($attendance->clock_in && $attendance->clock_out) {
-                $start = \Carbon\Carbon::parse($attendance->clock_in);
-                $end = \Carbon\Carbon::parse($attendance->clock_out);
+                $start = $parseTime($attendance->clock_in);
+                $end = $parseTime($attendance->clock_out);
 
-                // (退勤 - 出勤) の総分数から休憩分数を引く
                 $workingMinutes = $start->diffInMinutes($end) - $totalRestMinutes;
                 $workTimeDisplay = sprintf('%d:%02d', floor($workingMinutes / 60), $workingMinutes % 60);
+                }
                 }
                 @endphp
 
