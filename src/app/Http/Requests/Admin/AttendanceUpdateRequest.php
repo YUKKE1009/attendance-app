@@ -8,7 +8,7 @@ class AttendanceUpdateRequest extends FormRequest
 {
     public function authorize()
     {
-        return true; // 管理者なのでtrue
+        return true;
     }
 
     public function rules()
@@ -16,16 +16,15 @@ class AttendanceUpdateRequest extends FormRequest
         return [
             'clock_in'          => 'required',
             'clock_out'         => 'required',
-            'rests.*.break_in'  => 'required', // 管理者修正時は入力済みを想定
-            'rests.*.break_out' => 'required',
-            'remarks'           => 'required', // 管理者側は name="remarks" なのでこちらに合わせます
+            'rests.*.break_in'  => 'nullable',
+            'rests.*.break_out' => 'nullable',
+            'remarks'           => 'required',
         ];
     }
 
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            // 時間を「分」に変換するヘルパー関数
             $toMinutes = function ($time) {
                 if (!$time) return null;
                 $parts = explode(':', $time);
@@ -37,11 +36,14 @@ class AttendanceUpdateRequest extends FormRequest
 
             // 1. 出勤・退勤の前後関係 (FN039-1)
             if ($clockInMin !== null && $clockOutMin !== null && $clockInMin >= $clockOutMin) {
-                $validator->errors()->add('clock_time', '出勤時間もしくは退勤時間が不適切な値です');
+                $validator->errors()->add('clock_out', '出勤時間もしくは退勤時間が不適切な値です');
             }
 
-            // 休憩時間のチェック (スタッフ側のロジックを継承)
+            // 休憩時間のチェックロジック（スタッフ側を継承）
             $rests = $this->rests ?? [];
+            if ($this->new_rest_in && $this->new_rest_out) {
+                $rests['new'] = ['break_in' => $this->new_rest_in, 'break_out' => $this->new_rest_out];
+            }
 
             foreach ($rests as $rest) {
                 $bInMin = $toMinutes($rest['break_in'] ?? null);
@@ -51,17 +53,17 @@ class AttendanceUpdateRequest extends FormRequest
 
                 // 2. 休憩開始が出勤前、または退勤後 (FN039-2)
                 if ($bInMin < $clockInMin || $bInMin > $clockOutMin) {
-                    $validator->errors()->add('break_time', '休憩時間が不適切な値です');
+                    $validator->errors()->add('rests', '休憩時間が不適切な値です');
                 }
 
                 // 3. 休憩終了が退勤後 (FN039-3)
                 if ($bOutMin > $clockOutMin) {
-                    $validator->errors()->add('break_time', '休憩時間もしくは退勤時間が不適切な値です');
+                    $validator->errors()->add('rests', '休憩時間もしくは退勤時間が不適切な値です');
                 }
 
-                // 休憩自体の前後関係チェック
+                // 休憩自体の前後関係
                 if ($bInMin >= $bOutMin) {
-                    $validator->errors()->add('break_time', '休憩時間が不適切な値です');
+                    $validator->errors()->add('rests', '休憩時間が不適切な値です');
                 }
             }
         });
