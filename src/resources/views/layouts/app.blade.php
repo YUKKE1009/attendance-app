@@ -46,6 +46,8 @@
 
                     {{-- ■ 一般ユーザーとしてログインしている場合 --}}
                     @elseif(Auth::check())
+                    {{-- ★ここがポイント：認証済みの時だけ全メニューを表示 --}}
+                    @if(Auth::user()->hasVerifiedEmail())
                     <li class="header__nav-item">
                         <a href="/attendance">勤怠</a>
                     </li>
@@ -61,6 +63,8 @@
                             <button type="submit" class="header__nav-button">ログアウト</button>
                         </form>
                     </li>
+                    @endif
+                    {{-- 未認証（メール誘導画面）の時は、この else ブロックを通るが何も書かないので表示されない --}}
                     @endif
                 </ul>
             </nav>

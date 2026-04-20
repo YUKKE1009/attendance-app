@@ -134,3 +134,68 @@
 .auth-footer__link:hover {
     text-decoration: underline;
 }
+
+/* メール認証誘導画面のスタイル */
+.verify-email {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.verify-email__card {
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+.verify-email__text {
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1.8;
+    margin-bottom: 40px;
+    color: #000;
+}
+
+.verify-email__alert {
+    color: #fc0101;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+/* ボタンのデザイン */
+.verify-email__btn {
+    display: inline-block;
+    background-color: #d3d3d3;
+    color: #000;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: 1px solid #999;
+    font-weight: bold;
+    font-size: 18px;
+    transition: background-color 0.3s;
+    margin-bottom: 30px;
+}
+
+.verify-email__btn:hover {
+    background-color: #c0c0c0;
+}
+
+/* 再送リンク（ボタンをリンク風に） */
+.verify-email__resend-link {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    /* 青色 */
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+}
+
+.verify-email__resend-link:hover {
+    text-decoration: underline;
+    color: #1d4ed8;
+}

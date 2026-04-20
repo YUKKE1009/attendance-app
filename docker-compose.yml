@@ -40,3 +40,9 @@ services:
       - mysql
     ports:
       - 8080:80
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025" # SMTPサーバー（メールを送る用）
+      - "8025:8025" # Webブラウザ確認用（メールを見る用）ebブラウザ確認用（メールを見る用）

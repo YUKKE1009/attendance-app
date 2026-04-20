@@ -37,7 +37,8 @@ Route::middleware('auth:admin,web')->group(function () {
 });
 
 // --- 3. 一般ユーザー(web)のみアクセス可能なルート ---
-Route::middleware('auth:web')->group(function () {
+// auth:web の後ろに 'verified' を追加
+Route::middleware(['auth:web', 'verified'])->group(function () {
     Route::prefix('attendance')->group(function () {
         // PG03: 出勤登録画面
         Route::get('/', [AttendanceController::class, 'index'])->name('attendance.index');
@@ -54,7 +55,6 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/stamp_correction_request/list', [AttendanceController::class, 'requestList'])->name('request.list');
 });
 
-// --- 4. 管理者用ルート ---
 // --- 4. 管理者用ルート ---
 Route::prefix('admin')->group(function () {
 

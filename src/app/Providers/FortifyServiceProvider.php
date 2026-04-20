@@ -50,6 +50,11 @@ class FortifyServiceProvider extends ServiceProvider
             return request()->is('admin*') ? view('admin.login') : view('auth.login');
         });
 
+        // --- メール認証用のビューを指定 ---
+        Fortify::verifyEmailView(function () {
+            return view('auth.verify-email');
+        });
+
         Fortify::authenticateUsing(function (LoginRequest $request) {
             if ($request->is('admin*') || config('fortify.guard') === 'admin') {
                 $admin = Admin::where('email', $request->email)->first();

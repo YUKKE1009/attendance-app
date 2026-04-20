@@ -2,21 +2,27 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail; // 1. これが必要
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+// 2. 「class User」はファイル内にこれ一つだけにします
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
-    protected $fillable = ['name', 'email', 'password'];
-
-    // リレーション：1人のユーザーはたくさんの出勤記録を持つ
-    public function attendances()
-    {
-        return $this->hasMany(Attendance::class);
-    }
-
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -36,4 +42,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // 既存のリレーション（attendancesなど）があればここに追記
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
 }
