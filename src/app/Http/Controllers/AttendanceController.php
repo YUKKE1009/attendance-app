@@ -203,7 +203,7 @@ class AttendanceController extends Controller
             ]);
         }
 
-        return redirect()->route('request.list')->with('message', '修正申請を出しました');
+        return redirect()->route('admin.correction.list')->with('message', '修正申請を出しました');
     }
 
     // ★PG06: 申請一覧画面の表示

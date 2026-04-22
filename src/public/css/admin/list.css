@@ -37,7 +37,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* 両端に寄せる */
     background: #fff;
     padding: 15px 40px;
     border-radius: 10px;
@@ -103,12 +102,15 @@ body {
     text-align: center;
     font-size: 18px;
     font-weight: 500;
+    color: #888;
+    white-space: nowrap;
 }
 
 /* 詳細リンク */
 .detail-link {
     color: #000;
     text-decoration: none;
+    white-space: nowrap;
     font-weight: 800;
     padding: 5px 10px;
     border-radius: 4px;
@@ -118,6 +120,7 @@ body {
 .detail-link:hover {
     background-color: #aaaaaa;
     color: #ffffff;
+    text-decoration: none;
 }
 
 /* ==========================================
@@ -176,13 +179,9 @@ body div.attendance-list div.request-tabs {
 body div.attendance-list div.request-tabs a.tab-item {
     text-decoration: none;
     color: #888;
-    /* 非選択時は少し薄くしてメリハリをつける */
     padding-bottom: 15px;
-    /* 下線との距離 */
     font-size: 18px;
-    /* 文字を大きく */
     font-weight: bold;
-    /* 太字 */
     position: relative;
     display: inline-block;
     transition: color 0.3s;
@@ -228,13 +227,6 @@ body div.attendance-list table.attendance-table td {
     text-align: center;
     font-size: 16px;
     font-weight: bold;
-}
-
-/* 詳細リンク */
-body div.attendance-list table.attendance-table td a.detail-link {
-    color: #000;
-    font-weight: 800;
-    text-decoration: underline;
 }
 
 .no-data {

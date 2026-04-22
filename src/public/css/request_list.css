@@ -10,12 +10,11 @@ body {
 
 .request-list {
     max-width: 1000px;
-    /* 管理者と同じ幅に制限 */
     margin: 0 auto;
     padding: 40px 20px;
 }
 
-/* タイトル：左の黒棒デザイン（管理者側の28pxサイズ） */
+/* タイトル：左の黒棒デザイン */
 .request-list__title {
     font-size: 28px;
     font-weight: bold;
@@ -34,7 +33,7 @@ body {
 }
 
 /* ==========================================
-   2. タブメニュー（管理者UIと同期）
+   2. タブメニュー
    ========================================== */
 .request-list__tabs {
     display: flex;
@@ -47,7 +46,6 @@ body {
 .tab-item {
     text-decoration: none;
     color: #888;
-    /* 未選択は管理者と同じグレー */
     padding-bottom: 15px;
     font-size: 18px;
     font-weight: bold;
@@ -57,7 +55,6 @@ body {
     cursor: pointer;
 }
 
-/* 選択中のタブ */
 .tab-item.active {
     color: #000;
 }
@@ -73,7 +70,7 @@ body {
 }
 
 /* ==========================================
-   3. テーブルデザイン（管理者UIと同期）
+   3. テーブルデザイン
    ========================================== */
 .request-list__table {
     width: 100%;
@@ -99,13 +96,12 @@ body {
     border-bottom: 1px solid #F6F6F6;
     text-align: center;
     font-size: 16px;
-    /* 項目が多いため18pxから微調整 */
     font-weight: bold;
     color: #333;
     vertical-align: middle;
 }
 
-/* --- 列幅の個別設定 (スタッフ側の項目数に合わせて最適化) --- */
+/* --- 列幅の個別設定 --- */
 .request-list__table th:nth-child(1),
 .request-list__table td:nth-child(1) {
     width: 90px;
@@ -127,10 +123,9 @@ body {
 .request-list__table th:nth-child(4),
 .request-list__table td:nth-child(4) {
     width: auto;
-    text-align: center;
-    word-break: break-all;
 }
 
+/* 申請理由 */
 .request-list__table th:nth-child(5),
 .request-list__table td:nth-child(5) {
     width: 130px;
@@ -143,28 +138,32 @@ body {
 }
 
 /* 詳細 */
-
-/* --- 詳細リンク（管理者側のシンプルスタイル） --- */
-.request-list__table td a {
-    color: #000;
-    text-decoration: underline;
-    font-weight: 800;
-    transition: all 0.3s;
-}
-
-.request-list__table td a:hover {
-    color: #aaaaaa;
-    text-decoration: none;
-}
-
-.request-list__table tr:last-child td {
-    border-bottom: none;
-}
-
+/* --- データがない時 --- */
 .no-data {
     text-align: center;
     padding: 40px 20px;
     color: #000;
     background-color: #fafafa;
     font-weight: bold;
+}
+
+.request-list__table tr:last-child td {
+    border-bottom: none;
+}
+
+/* 詳細リンク */
+.detail-link {
+    color: #000;
+    text-decoration: none;
+    white-space: nowrap;
+    font-weight: 800;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.detail-link:hover {
+    background-color: #aaaaaa;
+    color: #ffffff;
+    text-decoration: none;
 }

@@ -9,12 +9,12 @@
     <h1 class="request-list__title">申請一覧</h1>
 
     <div class="request-list__tabs">
-        {{-- hrefをルート＋パラメータに変更し、$statusでactiveクラスを切り替える --}}
-        <a href="{{ route('request.list', ['status' => 'pending']) }}"
+        {{-- ★修正：名前を admin.correction.list に統一 --}}
+        <a href="{{ route('admin.correction.list', ['status' => 'pending']) }}"
             class="tab-item {{ $status === 'pending' ? 'active' : '' }}">
             承認待ち
         </a>
-        <a href="{{ route('request.list', ['status' => 'approved']) }}"
+        <a href="{{ route('admin.correction.list', ['status' => 'approved']) }}"
             class="tab-item {{ $status === 'approved' ? 'active' : '' }}">
             承認済み
         </a>
@@ -32,13 +32,10 @@
             </tr>
         </thead>
         <tbody>
-            @forelse($attendances as $attendance)
+            {{-- ★修正：Controllerから渡される変数 $requests を回す --}}
+            @forelse($requests as $attendance)
             <tr>
                 <td>
-                    {{--
-                      DBのstatusが「承認待ち」「承認済み」という文字列で入っている想定 
-                      もし数字(1, 2)で管理している場合は、ここを数値判定に書き換えてください
-                    --}}
                     <span class="status-badge {{ $attendance->status === '承認待ち' ? 'pending' : 'approved' }}">
                         {{ $attendance->status }}
                     </span>

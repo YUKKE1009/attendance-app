@@ -14,7 +14,6 @@
     <header class="header">
         <div class="header__inner">
             <div class="header__logo">
-                {{-- 管理者ログイン画面ならリンクなし、それ以外はトップへ --}}
                 @if(Request::is('admin/login'))
                 <img src="{{ asset('img/header-logo.png') }}" alt="COACHTECH">
                 @else
@@ -26,16 +25,16 @@
 
             <nav class="header__nav">
                 <ul class="header__nav-list">
-                    {{-- ■ 管理者としてログインしている場合 --}}
-                    @if(Auth::guard('admin')->check())
+                    {{-- ★ここを修正：管理者ログイン画面以外、かつ管理者として認証済みの場合のみ表示 --}}
+                    @if(!Request::is('admin/login') && Auth::guard('admin')->check())
                     <li class="header__nav-item">
-                        <a href="/admin/attendance/list">勤怠一覧</a>
+                        <a href="{{ route('admin.attendance.list') }}">勤怠一覧</a>
                     </li>
                     <li class="header__nav-item">
-                        <a href="/admin/staff/list">スタッフ一覧</a>
+                        <a href="{{ route('admin.staff.list') }}">スタッフ一覧</a>
                     </li>
                     <li class="header__nav-item">
-                        <a href="/admin/stamp_correction_request/list">申請一覧</a>
+                        <a href="{{ route('admin.correction.list') }}">申請一覧</a>
                     </li>
                     <li class="header__nav-item">
                         <form action="{{ route('admin.logout') }}" method="post" class="header__form">
@@ -46,16 +45,15 @@
 
                     {{-- ■ 一般ユーザーとしてログインしている場合 --}}
                     @elseif(Auth::check())
-                    {{-- ★ここがポイント：認証済みの時だけ全メニューを表示 --}}
                     @if(Auth::user()->hasVerifiedEmail())
                     <li class="header__nav-item">
-                        <a href="/attendance">勤怠</a>
+                        <a href="{{ route('attendance.index') }}">勤怠</a>
                     </li>
                     <li class="header__nav-item">
-                        <a href="/attendance/list">勤怠一覧</a>
+                        <a href="{{ route('attendance.list') }}">勤怠一覧</a>
                     </li>
                     <li class="header__nav-item">
-                        <a href="/stamp_correction_request/list">申請</a>
+                        <a href="{{ route('admin.correction.list') }}">申請</a>
                     </li>
                     <li class="header__nav-item">
                         <form action="/logout" method="post" class="header__form">
@@ -64,7 +62,6 @@
                         </form>
                     </li>
                     @endif
-                    {{-- 未認証（メール誘導画面）の時は、この else ブロックを通るが何も書かないので表示されない --}}
                     @endif
                 </ul>
             </nav>

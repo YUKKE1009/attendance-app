@@ -4,41 +4,56 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-// スタッフ側と同じモデルを使う
 use App\Models\Attendance;
 
 class CorrectionController extends Controller
 {
+    /**
+     * PG12: 申請一覧画面（管理者）
+     * パス: /stamp_correction_request/list
+     */
+    // app/Http/Controllers/Admin/CorrectionController.php
+
     public function index(Request $request)
     {
-        // 1. タブの状態を取得（デフォルトは pending）
         $status = $request->query('status', 'pending');
-
-        // 2. スタッフ側のロジックに合わせて表示する文字列を決定
         $statusValue = ($status === 'approved') ? '承認済み' : '承認待ち';
 
-        // 3. 管理者なので user_id の絞り込みはせず、全ユーザーのデータを取得
-        // スタッフ側と同じく Attendance モデルから取得
-        $requests = Attendance::with('user')
+        // 1. 管理者の場合（既存のコード）
+        if (auth()->guard('admin')->check()) {
+            $requests = \App\Models\Attendance::with('user')->where('status', $statusValue)->get();
+            return view('admin.request', compact('requests', 'status'));
+        }
+
+        // 2. 一般ユーザーの場合（ここを修正！）
+        $requests = \App\Models\Attendance::where('user_id', auth()->id())
             ->where('status', $statusValue)
-            ->orderBy('updated_at', 'desc')
             ->get();
 
-        return view('admin.request', compact('requests', 'status'));
+        // resources/views/request/list.blade.php を呼び出す
+        return view('request.list', compact('requests', 'status'));
     }
 
+
+    /**
+     * PG13: 修正申請承認画面（管理者）
+     * パス: /stamp_correction_request/approve/{id}
+     */
     public function show($id)
     {
+        // 申請データ（Attendance）を取得
         $attendance = Attendance::with(['rests', 'user'])->findOrFail($id);
 
+        // 管理者用詳細画面を表示（承認モード）
         return view('admin.detail', [
             'attendance' => $attendance,
-            'mode' => 'approve'
+            'mode' => 'approve' // Blade側で「承認」ボタンを表示させるためのフラグ
         ]);
     }
 
     /**
      * PG13: 修正申請の承認処理
+     * 実行後、PG12の申請一覧画面へリダイレクト
      */
     public function approve(Request $request, $id)
     {
@@ -46,12 +61,14 @@ class CorrectionController extends Controller
         $attendance = Attendance::findOrFail($id);
 
         // 2. ステータスを「承認済み」に更新
+        // ※実際の運用ではここで修正内容の反映ロジックが入る場合もありますが、
+        // 現状のステータス更新仕様に基づき実装
         $attendance->update([
             'status' => '承認済み'
         ]);
 
-        // 3. 申請一覧画面へリダイレクト（メッセージ付き）
+        // 3. 申請一覧画面（PG12）へリダイレクト
+        // route('admin.correction.list') は /stamp_correction_request/list を指します
         return redirect()->route('admin.correction.list')->with('message', '承認が完了しました');
     }
-
 }
