@@ -29,12 +29,12 @@ class CorrectionController extends Controller
 
     public function show($id)
     {
-        // 申請データ（Attendance）を取得
         $attendance = Attendance::with(['rests', 'user'])->findOrFail($id);
 
-        // PG09で作成済みの「管理者用詳細画面」を表示
-        // viewのパスは resources/views/admin/detail.blade.php なので 'admin.detail'
-        return view('admin.detail', compact('attendance'));
+        return view('admin.detail', [
+            'attendance' => $attendance,
+            'mode' => 'approve'
+        ]);
     }
 
     /**

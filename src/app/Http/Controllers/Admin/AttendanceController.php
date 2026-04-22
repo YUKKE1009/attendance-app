@@ -26,10 +26,14 @@ class AttendanceController extends Controller
     public function show($id)
     {
         $attendance = Attendance::with(['user', 'rests'])->findOrFail($id);
-        return view('admin.detail', compact('attendance'));
+
+        return view('admin.detail', [
+            'attendance' => $attendance,
+            'mode' => 'edit'
+        ]);
     }
 
-    // ★ここを追加！管理者の「修正」ボタンがここにつながります
+    // 管理者の「修正」ボタンがここにつながります
     public function update(AttendanceUpdateRequest $request, $id)
     {
         $attendance = Attendance::findOrFail($id);
