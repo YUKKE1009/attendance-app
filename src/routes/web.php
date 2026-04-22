@@ -91,8 +91,8 @@ Route::prefix('admin')->group(function () {
             ->name('admin.correction.list');
 
         // PG13相当: 申請詳細画面
-        Route::get('/stamp_correction_request/detail/{id}', [CorrectionController::class, 'show'])
-            ->name('admin.correction.detail');
+        Route::get('/stamp_correction_request/approve/{id}', [CorrectionController::class, 'show'])
+            ->name('admin.attendance.approve.show');
 
         // PG13 承認処理本体
         // POSTで受け取り、CorrectionControllerのapproveメソッドを呼び出す

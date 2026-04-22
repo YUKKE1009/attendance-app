@@ -40,7 +40,7 @@
                     <td>{{ $req->remarks }}</td>
                     <td>{{ \Carbon\Carbon::parse($req->created_at)->format('Y/m/d') }}</td>
                     <td>
-                        <a href="{{ route('admin.correction.detail', ['id' => $req->id]) }}" class="detail-link">詳細</a>
+                        <a href="{{ route('admin.attendance.approve.show', ['id' => $req->id]) }}" class="detail-link">詳細</a>
                     </td>
                 </tr>
                 @empty
