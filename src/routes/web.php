@@ -74,7 +74,10 @@ Route::prefix('admin')->group(function () {
     // 【ログイン後】
     Route::middleware('auth:admin')->group(function () {
         Route::get('/attendance/list', [AdminAttendanceController::class, 'index'])->name('admin.attendance.list');
+
+        // 特定スタッフの勤怠一覧
         Route::get('/attendance/staff/{id}', [AdminAttendanceController::class, 'staff'])->name('admin.staff.attendance');
+        Route::get('/attendance/staff/{id}/export', [AdminAttendanceController::class, 'exportCsv'])->name('admin.attendance.staff.export');
         Route::get('/attendance/{id}', [AdminAttendanceController::class, 'show'])->name('admin.attendance.detail');
         Route::patch('/attendance/{id}', [AdminAttendanceController::class, 'update'])->name('admin.attendance.update');
         Route::get('/staff/list', [StaffController::class, 'index'])->name('admin.staff.list');

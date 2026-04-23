@@ -224,7 +224,7 @@ body div.attendance-list table.attendance-table td {
     padding: 20px;
     border-bottom: 1px solid #F6F6F6;
     text-align: center;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     color: #888;
 }
@@ -235,4 +235,32 @@ body div.attendance-list table.attendance-table td {
     color: #000;
     background-color: #fafafa;
     font-weight: bold;
+}
+
+/* CSV出力ボタンのコンテナを右寄せにする */
+.csv-export {
+    display: flex;
+    justify-content: flex-end;
+    /* 右側に寄せる */
+    margin-top: 20px;
+    /* テーブルとの間の余白 */
+    padding-bottom: 20px;
+    /* 画面最下部との間の余白 */
+}
+
+/* ボタン本体のデザイン */
+.csv-btn {
+    background-color: #000;
+    color: #fff !important;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 40px;
+    /* ボタンのサイズ感（上下10px, 左右40px） */
+    border-radius: 5px;
+    font-size: 16px;
+    transition: opacity 0.3s;
+}
+
+.csv-btn:hover {
+    opacity: 0.8;
 }
