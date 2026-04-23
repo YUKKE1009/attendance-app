@@ -197,7 +197,6 @@ body div.attendance-list div.request-tabs a.tab-item.is-active::after {
     content: "";
     position: absolute;
     bottom: -1px;
-    /* 枠線とピッタリ重ねる */
     left: 0;
     width: 100%;
     height: 3px;
@@ -227,7 +226,7 @@ body div.attendance-list table.attendance-table td {
     text-align: center;
     font-size: 16px;
     font-weight: bold;
-    color: #000;
+    color: #888;
 }
 
 .no-data {
