@@ -7,7 +7,6 @@ use App\Models\Attendance;
 use App\Models\Rest;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-// ★ FormRequestをuseに追加
 use App\Http\Requests\AttendanceUpdateRequest;
 
 class AttendanceController extends Controller
@@ -203,7 +202,7 @@ class AttendanceController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.correction.list')->with('message', '修正申請を出しました');
+        return redirect()->route('admin.correction.list');
     }
 
     // ★PG06: 申請一覧画面の表示
