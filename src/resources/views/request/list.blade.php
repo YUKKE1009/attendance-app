@@ -32,20 +32,23 @@
             </tr>
         </thead>
         <tbody>
-            {{-- ★修正：Controllerから渡される変数 $requests を回す --}}
-            @forelse($requests as $attendance)
+            {{-- $requests を $req として回します --}}
+            @forelse($requests as $req)
             <tr>
                 <td>
-                    <span class="status-badge {{ $attendance->status === '承認待ち' ? 'pending' : 'approved' }}">
-                        {{ $attendance->status }}
-                    </span>
+                    {{-- 数字の1・2を文字に変換して表示 --}}
+                    {{ $status === 'approved' ? '承認済み' : '承認待ち' }}
                 </td>
-                <td>{{ $attendance->user->name }}</td>
-                <td>{{ \Carbon\Carbon::parse($attendance->date)->format('Y/m/d') }}</td>
-                <td>{{ $attendance->remarks }}</td>
-                <td>{{ $attendance->updated_at->format('Y/m/d') }}</td>
+                <td>{{ $req->user->name }}</td>
+                {{-- date ではなく target_date に変更 --}}
+                <td>{{ \Carbon\Carbon::parse($req->target_date)->format('Y/m/d') }}</td>
+                {{-- remarks ではなく remark に変更 --}}
+                <td>{{ $req->remark }}</td>
+                {{-- created_at（申請した日）を表示 --}}
+                <td>{{ \Carbon\Carbon::parse($req->created_at)->format('Y/m/d') }}</td>
                 <td>
-                    <a href="{{ route('attendance.detail', $attendance->id) }}" class="detail-link">詳細</a>
+                    {{-- 詳細へのリンク。一般ユーザー用の詳細画面ルートを指定 --}}
+                    <a href="{{ route('attendance.detail', ['id' => $req->attendance_id]) }}" class="detail-link">詳細</a>
                 </td>
             </tr>
             @empty

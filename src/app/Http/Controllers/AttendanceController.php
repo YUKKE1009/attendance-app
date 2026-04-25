@@ -157,6 +157,17 @@ class AttendanceController extends Controller
         $clockOut = $request->clock_out;
         if ($clockOut && strlen($clockOut) === 5) $clockOut .= ':00';
 
+        // phpMyAdminの correction_requests テーブルに保存する
+        \App\Models\CorrectionRequest::create([
+            'user_id'           => \Illuminate\Support\Facades\Auth::id(),
+            'attendance_id'     => $attendance->id,
+            'status'            => 1, // 1:承認待ち
+            'target_date'       => $attendance->date,
+            'remark'            => $request->remarks,
+            'updated_clock_in'  => $clockIn,
+            'updated_clock_out' => $clockOut,
+        ]);
+
         // 1. 勤怠本体の更新とステータスを「承認待ち」に変更
         $attendance->update([
             'clock_in'  => $clockIn, // 補完後の変数を使う
