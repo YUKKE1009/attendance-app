@@ -46,12 +46,16 @@ class AttendanceController extends Controller
         // Bladeに $attendance と $displayStatus の両方を渡す
         return view('attendance.attendance', compact('attendance', 'displayStatus'));
     }
-       
 
     // 出勤処理
     public function store(Request $request)
     {
-        $userId = Auth::id() ?? 1;
+        $userId = Auth::id();
+        // もしログインしてなければエラーにする（安全策）
+        if (!$userId) {
+            return redirect('/login');
+        }
+
         $now = Carbon::now();
 
         $attendance = Attendance::create([
