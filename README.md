@@ -15,7 +15,7 @@ Laravelを使って作成した、指示書の仕様に基づく勤怠管理ア�
 # リポジトリをクローン
 git clone git@github.com:YUKKE1009/attendance-app.git
 # ディレクトリ移動
-cd fleamarket-app
+cd attendance-app
 # Dockerビルド＆起動
 docker-compose up -d --build
 # VSCodeで開く
@@ -114,8 +114,8 @@ docker-compose exec php bash
 # .env をコピーしてテスト用ファイルを作成
 cp .env .env.testing
 
-# DB接続先をテスト用DB(demo_test)に書き換え
-sed -i 's/DB_DATABASE=fleamarket_db/DB_DATABASE=demo_test/g' .env.testing
+# DB接続先をテスト用DB(attendance_test)に書き換え
+sed -i 's/DB_DATABASE=laravel_db/DB_DATABASE=attendance_test/g' .env.testing
 ```
 
 ### 4. テストの実行
