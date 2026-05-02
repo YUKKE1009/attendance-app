@@ -45,10 +45,15 @@ class CorrectionController extends Controller
         $attendance->clock_out = $correction->updated_clock_out;
         $attendance->remarks = $correction->remark;
 
+        // status が  1（承認待ち）かどうかを判定
+        // status が 2（承認済み）であれば false になります
+        $isPending = ($correction->status == 1);
+
         return view('admin.detail', [
             'attendance' => $attendance,
-            'correction' => $correction, // 承認ボタン等で使うために渡す
-            'mode' => 'approve'
+            'correction' => $correction,
+            'mode' => 'approve',
+            'isPending' => $isPending // 💡 これを View に渡す
         ]);
     }
 
