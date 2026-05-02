@@ -44,7 +44,8 @@
 
             @foreach($attendance->rests as $index => $rest)
             <tr>
-                <th>休憩</th>
+                {{-- $loop->iteration を使って 1, 2, 3... と表示させます --}}
+                <th>休憩{{ $loop->iteration }}</th>
                 <td>
                     @if($isPending)
                     {{ substr($rest->break_in, 0, 5) }}
@@ -58,7 +59,6 @@
                 </td>
             </tr>
             @endforeach
-
 
             @if(!$isPending)
             <tr>
