@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use App\Http\Requests\Admin\AttendanceUpdateRequest;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Models\Rest;
 
 class AttendanceController extends Controller
 {
@@ -34,12 +35,11 @@ class AttendanceController extends Controller
         ]);
     }
 
-    // 管理者の「修正」ボタンがここにつながります
     public function update(AttendanceUpdateRequest $request, $id)
     {
         $attendance = Attendance::findOrFail($id);
 
-        // 1. 基本情報の更新
+        // 1. 基本情報の更新（ここは今のままでOK！）
         $attendance->update([
             'clock_in'  => $request->clock_in,
             'clock_out' => $request->clock_out,
@@ -48,17 +48,21 @@ class AttendanceController extends Controller
         ]);
 
         // 2. 既存の休憩時間の更新
+        // 既存の休憩時間の更新部分
         if ($request->has('rests')) {
             foreach ($request->rests as $restId => $restData) {
-                $attendance->rests()->where('id', $restId)->update([
-                    'break_in'  => $restData['break_in'],
-                    'break_out' => $restData['break_out'],
-                ]);
+                $rest = Rest::find($restId);
+                if ($rest) {
+                    $rest->update([
+                        // 💡 ?? null を使い、未入力時はnullをセット
+                        'break_in'  => $restData['break_in'] ?? null,
+                        'break_out' => $restData['break_out'] ?? null,
+                    ]);
+                }
             }
         }
 
         // 3. 新しい休憩（追加分）の保存
-        // Blade側の input name="new_rest_in" と "new_rest_out" を受け取ります
         if ($request->filled(['new_rest_in', 'new_rest_out'])) {
             $attendance->rests()->create([
                 'break_in'  => $request->new_rest_in,
@@ -66,7 +70,6 @@ class AttendanceController extends Controller
             ]);
         }
 
-        // 4. 一覧画面へ戻る
         return redirect()->route('admin.attendance.list', ['date' => $attendance->date])
             ->with('success', '勤怠情報を修正しました');
     }
