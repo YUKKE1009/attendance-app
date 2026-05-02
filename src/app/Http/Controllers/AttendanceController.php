@@ -143,8 +143,42 @@ class AttendanceController extends Controller
 
     public function show($id)
     {
+        // 1. 元のデータを取得
         $attendance = Attendance::with(['rests', 'user'])->findOrFail($id);
+
+        // 2. この勤怠に対する「承認待ち」の申請があるか探す
+        $correctionRequest = \App\Models\CorrectionRequest::where('attendance_id', $id)
+            ->where('status', 1) // 1: 承認待ち
+            ->first();
+
         $isPending = ($attendance->status === '承認待ち');
+
+        // 💡 3. 承認待ちなら、表示するデータを「申請内容」ですり替える！
+        if ($isPending && $correctionRequest) {
+            $attendance->clock_in = $correctionRequest->updated_clock_in;
+            $attendance->clock_out = $correctionRequest->updated_clock_out;
+            $attendance->remarks = $correctionRequest->remark;
+
+            // 💡 休憩データ(JSON)をデコードして、一時的に rests リレーションを上書きする
+            $restsData = json_decode($correctionRequest->updated_rests, true);
+
+            // 申請データの中にある休憩情報を、画面表示用のコレクションに変換
+            if (isset($restsData['existing'])) {
+                // 既存の休憩を、申請された値に置き換えて表示
+                foreach ($attendance->rests as $rest) {
+                    if (isset($restsData['existing'][$rest->id])) {
+                        $rest->break_in = $restsData['existing'][$rest->id]['break_in'];
+                        $rest->break_out = $restsData['existing'][$rest->id]['break_out'];
+                    }
+                }
+            }
+
+            // ★重要：もし申請時に「消した（空にした）」休憩があれば、
+            // コレクションから除外して表示されないようにする処理もここで行えます。
+            $attendance->setRelation('rests', $attendance->rests->filter(function ($rest) {
+                return !empty($rest->break_in); // 開始時間があるものだけ表示
+            }));
+        }
 
         return view('attendance.detail', compact('attendance', 'isPending'));
     }
@@ -154,14 +188,23 @@ class AttendanceController extends Controller
     {
         $attendance = Attendance::findOrFail($id);
 
-        // 秒補完のロジック
+        // 1. 秒補完のロジック（既存のものを流用）
         $clockIn = $request->clock_in;
         if ($clockIn && strlen($clockIn) === 5) $clockIn .= ':00';
-
         $clockOut = $request->clock_out;
         if ($clockOut && strlen($clockOut) === 5) $clockOut .= ':00';
 
-        // phpMyAdminの correction_requests テーブルに保存する
+        // 💡 2. 休憩データをJSONに変換する（新規・既存・追加分をまとめる）
+        // $request->rests は既存分、$request->new_rest_inなどは新規分です
+        $restsData = [
+            'existing' => $request->rests, // 既存の休憩（ID付き）
+            'new' => [
+                'break_in' => $request->new_rest_in,
+                'break_out' => $request->new_rest_out,
+            ]
+        ];
+
+        // 3. correction_requests テーブルに保存
         \App\Models\CorrectionRequest::create([
             'user_id'           => \Illuminate\Support\Facades\Auth::id(),
             'attendance_id'     => $attendance->id,
@@ -170,54 +213,15 @@ class AttendanceController extends Controller
             'remark'            => $request->remarks,
             'updated_clock_in'  => $clockIn,
             'updated_clock_out' => $clockOut,
+            'updated_rests'     => json_encode($restsData), // 💡 ここでJSON化して保存！
         ]);
 
-        // 1. 勤怠本体の更新とステータスを「承認待ち」に変更
+        // 4. 勤怠本体は「ステータス」のみ更新（時間は変えない）
         $attendance->update([
-            'clock_in'  => $clockIn, // 補完後の変数を使う
-            'clock_out' => $clockOut,
-            'remarks'   => $request->remarks,
-            'status'    => '承認待ち',
+            'status' => '承認待ち',
         ]);
 
-        // 2. 既存の休憩データの更新（空なら削除・スキップ）
-        if ($request->has('rests')) {
-            foreach ($request->rests as $restId => $restData) {
-                $in = $restData['break_in'];
-                $out = $restData['break_out'];
-
-                // ★【両方ブランク】ならDBから削除
-                if (empty($in) && empty($out)) {
-                    Rest::destroy($restId);
-                    continue;
-                }
-
-                // ★【片方だけ入力】なら更新せずに無視（不完全なデータを防ぐ）
-                if (empty($in) || empty($out)) {
-                    continue;
-                }
-
-                // 両方入力されている場合のみ更新（秒補完も考慮）
-                Rest::where('id', $restId)->update([
-                    'break_in'  => (strlen($in) === 5) ? $in . ':00' : $in,
-                    'break_out' => (strlen($out) === 5) ? $out . ':00' : $out,
-                ]);
-            }
-        }
-
-        // 3. 新規追加分の休憩保存（両方入力されている時だけ保存）
-        if (!empty($request->new_rest_in) && !empty($request->new_rest_out)) {
-            $newIn = $request->new_rest_in;
-            $newOut = $request->new_rest_out;
-
-            Rest::create([
-                'attendance_id' => $attendance->id,
-                'break_in'      => (strlen($newIn) === 5) ? $newIn . ':00' : $newIn,
-                'break_out'     => (strlen($newOut) === 5) ? $newOut . ':00' : $newOut,
-            ]);
-        }
-
-        return redirect()->route('admin.correction.list');
+        return redirect()->route('attendance.list')->with('success', '修正申請を提出しました。承認されるまで一覧には反映されません。');
     }
 
     // ★PG06: 申請一覧画面の表示

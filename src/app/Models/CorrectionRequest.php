@@ -13,7 +13,8 @@ class CorrectionRequest extends Model
         'target_date',
         'remark',
         'updated_clock_in',
-        'updated_clock_out'
+        'updated_clock_out',
+        'updated_rests',
     ];
 
     public function user()

@@ -36,34 +36,51 @@ class CorrectionController extends Controller
 
     public function show($id)
     {
-        // attendance_id ではなく correction_requests テーブルの ID で検索
         $correction = CorrectionRequest::with(['attendance.rests', 'user'])->findOrFail($id);
         $attendance = $correction->attendance;
 
-        // 画面に表示する値を「修正案」の内容に一時的に差し替える
+        // 1. 出退勤と備考を申請内容に差し替え
         $attendance->clock_in = $correction->updated_clock_in;
         $attendance->clock_out = $correction->updated_clock_out;
         $attendance->remarks = $correction->remark;
 
-        // status が  1（承認待ち）かどうかを判定
-        // status が 2（承認済み）であれば false になります
+        // 💡 2. 休憩データ(JSON)を復元して表示に反映させる
+        if ($correction->updated_rests) {
+            $restsData = json_decode($correction->updated_rests, true);
+
+            // 既存の休憩リレーションの内容を、申請された値で上書き
+            if (isset($restsData['existing'])) {
+                foreach ($attendance->rests as $rest) {
+                    if (isset($restsData['existing'][$rest->id])) {
+                        $rest->break_in = $restsData['existing'][$rest->id]['break_in'];
+                        $rest->break_out = $restsData['existing'][$rest->id]['break_out'];
+                    }
+                }
+            }
+
+            // 💡 3. 表示から「空（消された）」休憩を除外する
+            // これにより、画面上で休憩2、休憩3が消えて見えます
+            $attendance->setRelation('rests', $attendance->rests->filter(function ($rest) {
+                return !empty($rest->break_in);
+            }));
+        }
+
         $isPending = ($correction->status == 1);
 
         return view('admin.detail', [
             'attendance' => $attendance,
             'correction' => $correction,
             'mode' => 'approve',
-            'isPending' => $isPending // 💡 これを View に渡す
+            'isPending' => $isPending
         ]);
     }
 
     public function approve(Request $request, $id)
     {
-        // 1. 修正申請データを取得
         $correction = CorrectionRequest::findOrFail($id);
-
-        // 2. 本体の勤怠データ(Attendance)を修正案の内容で正式に更新
         $attendance = Attendance::findOrFail($correction->attendance_id);
+
+        // 1. 本体の更新
         $attendance->update([
             'clock_in'  => $correction->updated_clock_in,
             'clock_out' => $correction->updated_clock_out,
@@ -71,7 +88,24 @@ class CorrectionController extends Controller
             'status'    => '承認済み'
         ]);
 
-        // 3. 修正申請側のステータスも「承認済み(2)」にする
+        // 💡 2. 休憩データの反映 (DBの値を実際に書き換える)
+        if ($correction->updated_rests) {
+            $restsData = json_decode($correction->updated_rests, true);
+            if (isset($restsData['existing'])) {
+                foreach ($restsData['existing'] as $restId => $times) {
+                    // 両方空なら削除、そうでなければ更新
+                    if (empty($times['break_in']) && empty($times['break_out'])) {
+                        \App\Models\Rest::destroy($restId);
+                    } else {
+                        \App\Models\Rest::where('id', $restId)->update([
+                            'break_in'  => $times['break_in'],
+                            'break_out' => $times['break_out'],
+                        ]);
+                    }
+                }
+            }
+        }
+
         $correction->update(['status' => 2]);
 
         return redirect()->route('admin.correction.list')->with('message', '承認が完了しました');
