@@ -95,31 +95,8 @@ PHPUnitを用いて、指示書のテストケース一覧（ID 1〜16）をカ�
   - 基本機能テスト: 24項目
   - 応用機能（メール認証）: 3項目
   - ステータス: すべて合格（OK）
-
-## テストの実行方法
-### 1. テスト用データベースの作成（初回のみ）
-Mac（ホスト側）のターミナルで実行し、テスト用のデータベースを作成します。
-```bash
-docker-compose exec mysql mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS attendance_test;"
-```
-### 2. コンテナ内へのログイン
-PHPコンテナに入ります。
-```bash
-docker-compose exec php bash
-```
-
-### 3. テスト用環境変数の設定
-テスト実行時に開発用DBを破壊しない設定と、Stripeのダミーキーを設定します。コンテナ内で実行してください。
-```bash
-# .env をコピーしてテスト用ファイルを作成
-cp .env .env.testing
-
-# DB接続先をテスト用DB(attendance_test)に書き換え
-sed -i 's/DB_DATABASE=laravel_db/DB_DATABASE=attendance_test/g' .env.testing
-```
-
-### 4. テストの実行
-コンテナ内で以下のコマンドを実行し、全てのテストが PASS することを確認してください。
+- テストの実行方法
+  - コンテナ内で以下のコマンドを実行し、全てのテストが PASS することを確認してください。
 ```bash
 php artisan test
 ```
