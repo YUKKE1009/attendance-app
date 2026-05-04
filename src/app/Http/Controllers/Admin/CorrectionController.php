@@ -15,18 +15,15 @@ class CorrectionController extends Controller
         $status = $request->query('status', 'pending');
         $statusValue = ($status === 'approved') ? 2 : 1;
 
-        // 1. クエリの基本形
         $query = \App\Models\CorrectionRequest::with(['user', 'attendance'])
             ->where('status', $statusValue);
 
-        // 2.管理者でない（一般スタッフ）なら、自分の分だけに絞り込む
         if (!auth()->guard('admin')->check()) {
             $query->where('user_id', auth()->id());
         }
 
         $requests = $query->get();
 
-        // 3. 表示するViewを分ける
         if (auth()->guard('admin')->check()) {
             return view('admin.request', compact('requests', 'status'));
         }
@@ -39,16 +36,13 @@ class CorrectionController extends Controller
         $correction = CorrectionRequest::with(['attendance.rests', 'user'])->findOrFail($id);
         $attendance = $correction->attendance;
 
-        // 1. 出退勤と備考を申請内容に差し替え
         $attendance->clock_in = $correction->updated_clock_in;
         $attendance->clock_out = $correction->updated_clock_out;
         $attendance->remarks = $correction->remark;
 
-        // 💡 2. 休憩データ(JSON)を復元して表示に反映させる
         if ($correction->updated_rests) {
             $restsData = json_decode($correction->updated_rests, true);
 
-            // 既存の休憩リレーションの内容を、申請された値で上書き
             if (isset($restsData['existing'])) {
                 foreach ($attendance->rests as $rest) {
                     if (isset($restsData['existing'][$rest->id])) {
@@ -58,8 +52,14 @@ class CorrectionController extends Controller
                 }
             }
 
-            // 💡 3. 表示から「空（消された）」休憩を除外する
-            // これにより、画面上で休憩2、休憩3が消えて見えます
+            if (isset($restsData['new'])) {
+                $newRest = new \App\Models\Rest([
+                    'break_in'  => $restsData['new']['break_in'],
+                    'break_out' => $restsData['new']['break_out'],
+                ]);
+                $attendance->rests->push($newRest);
+            }
+
             $attendance->setRelation('rests', $attendance->rests->filter(function ($rest) {
                 return !empty($rest->break_in);
             }));
@@ -74,13 +74,17 @@ class CorrectionController extends Controller
             'isPending' => $isPending
         ]);
     }
-
     public function approve(Request $request, $id)
     {
         $correction = CorrectionRequest::findOrFail($id);
         $attendance = Attendance::findOrFail($correction->attendance_id);
 
-        // 1. 本体の更新
+        // 💡 重要：すでに承認済み（status=2）なら処理を中断してリダイレクトさせる
+        if ($correction->status == 2) {
+            return redirect()->route('admin.correction.list')->with('error', 'この申請は既に承認済みです。');
+        }
+
+        // --- 1. 本体（Attendance）の更新 ---
         $attendance->update([
             'clock_in'  => $correction->updated_clock_in,
             'clock_out' => $correction->updated_clock_out,
@@ -88,12 +92,13 @@ class CorrectionController extends Controller
             'status'    => '承認済み'
         ]);
 
-        // 💡 2. 休憩データの反映 (DBの値を実際に書き換える)
+        // --- 2. 休憩データの反映 ---
         if ($correction->updated_rests) {
             $restsData = json_decode($correction->updated_rests, true);
+
+            // 既存休憩の更新・削除
             if (isset($restsData['existing'])) {
                 foreach ($restsData['existing'] as $restId => $times) {
-                    // 両方空なら削除、そうでなければ更新
                     if (empty($times['break_in']) && empty($times['break_out'])) {
                         \App\Models\Rest::destroy($restId);
                     } else {
@@ -104,8 +109,18 @@ class CorrectionController extends Controller
                     }
                 }
             }
+
+            // 💡 3. 新規休憩の保存
+            // statusが1の時（＝今回初めて承認する時）だけ実行するようにガードをかける
+            if (isset($restsData['new'])) {
+                $attendance->rests()->create([
+                    'break_in'  => $restsData['new']['break_in'],
+                    'break_out' => $restsData['new']['break_out'],
+                ]);
+            }
         }
 
+        // --- 4. 申請を承認済みに更新 ---
         $correction->update(['status' => 2]);
 
         return redirect()->route('admin.correction.list')->with('message', '承認が完了しました');

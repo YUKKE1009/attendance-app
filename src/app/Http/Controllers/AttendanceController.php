@@ -159,12 +159,10 @@ class AttendanceController extends Controller
             $attendance->clock_out = $correctionRequest->updated_clock_out;
             $attendance->remarks = $correctionRequest->remark;
 
-            // 💡 休憩データ(JSON)をデコードして、一時的に rests リレーションを上書きする
             $restsData = json_decode($correctionRequest->updated_rests, true);
 
-            // 申請データの中にある休憩情報を、画面表示用のコレクションに変換
+            // 1. 既存の休憩の書き換え
             if (isset($restsData['existing'])) {
-                // 既存の休憩を、申請された値に置き換えて表示
                 foreach ($attendance->rests as $rest) {
                     if (isset($restsData['existing'][$rest->id])) {
                         $rest->break_in = $restsData['existing'][$rest->id]['break_in'];
@@ -173,10 +171,19 @@ class AttendanceController extends Controller
                 }
             }
 
-            // ★重要：もし申請時に「消した（空にした）」休憩があれば、
-            // コレクションから除外して表示されないようにする処理もここで行えます。
+            // 💡 2. ここを追加：新規追加分の休憩（休憩3など）を表示用データに合流させる
+            if (isset($restsData['new'])) {
+                $newRest = new \App\Models\Rest([
+                    'break_in'  => $restsData['new']['break_in'],
+                    'break_out' => $restsData['new']['break_out'],
+                ]);
+                // pushすることで、Bladeの @foreach ($attendance->rests as $rest) に現れるようになります
+                $attendance->rests->push($newRest);
+            }
+
+            // 3. 空の休憩を除外する（filter）
             $attendance->setRelation('rests', $attendance->rests->filter(function ($rest) {
-                return !empty($rest->break_in); // 開始時間があるものだけ表示
+                return !empty($rest->break_in);
             }));
         }
 
@@ -194,15 +201,18 @@ class AttendanceController extends Controller
         $clockOut = $request->clock_out;
         if ($clockOut && strlen($clockOut) === 5) $clockOut .= ':00';
 
-        // 💡 2. 休憩データをJSONに変換する（新規・既存・追加分をまとめる）
-        // $request->rests は既存分、$request->new_rest_inなどは新規分です
+        // 💡 2. 休憩データをJSONに変換する
         $restsData = [
             'existing' => $request->rests, // 既存の休憩（ID付き）
-            'new' => [
-                'break_in' => $request->new_rest_in,
-                'break_out' => $request->new_rest_out,
-            ]
         ];
+
+        // 💡 ここを追加：新規休憩の入力がある場合のみ 'new' キーを追加する
+        if ($request->filled(['new_rest_in', 'new_rest_out'])) {
+            $restsData['new'] = [
+                'break_in'  => $request->new_rest_in,
+                'break_out' => $request->new_rest_out,
+            ];
+        }
 
         // 3. correction_requests テーブルに保存
         \App\Models\CorrectionRequest::create([
@@ -213,7 +223,7 @@ class AttendanceController extends Controller
             'remark'            => $request->remarks,
             'updated_clock_in'  => $clockIn,
             'updated_clock_out' => $clockOut,
-            'updated_rests'     => json_encode($restsData), // 💡 ここでJSON化して保存！
+            'updated_rests'     => json_encode($restsData),
         ]);
 
         // 4. 勤怠本体は「ステータス」のみ更新（時間は変えない）
