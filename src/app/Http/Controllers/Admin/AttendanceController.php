@@ -27,7 +27,48 @@ class AttendanceController extends Controller
 
     public function show($id)
     {
+        // 1. 元の勤怠データを取得
         $attendance = Attendance::with(['user', 'rests'])->findOrFail($id);
+
+        // 💡 2. この勤怠に対する「承認待ち」の申請があるか確認
+        $correction = \App\Models\CorrectionRequest::where('attendance_id', $id)
+            ->where('status', 1) // 1: 承認待ち
+            ->first();
+
+        // 💡 3. 承認待ちの申請があれば、表示内容を申請内容ですり替える
+        if ($correction) {
+            $attendance->clock_in = $correction->updated_clock_in;
+            $attendance->clock_out = $correction->updated_clock_out;
+            $attendance->remarks = $correction->remark;
+
+            if ($correction->updated_rests) {
+                $restsData = json_decode($correction->updated_rests, true);
+
+                // 既存休憩の書き換え
+                if (isset($restsData['existing'])) {
+                    foreach ($attendance->rests as $rest) {
+                        if (isset($restsData['existing'][$rest->id])) {
+                            $rest->break_in = $restsData['existing'][$rest->id]['break_in'];
+                            $rest->break_out = $restsData['existing'][$rest->id]['break_out'];
+                        }
+                    }
+                }
+
+                // 新規追加分の休憩（休憩3など）を合流させる
+                if (isset($restsData['new'])) {
+                    $newRest = new \App\Models\Rest([
+                        'break_in'  => $restsData['new']['break_in'],
+                        'break_out' => $restsData['new']['break_out'],
+                    ]);
+                    $attendance->rests->push($newRest);
+                }
+
+                // 表示から空（消去された）休憩を除外
+                $attendance->setRelation('rests', $attendance->rests->filter(function ($rest) {
+                    return !empty($rest->break_in);
+                }));
+            }
+        }
 
         return view('admin.detail', [
             'attendance' => $attendance,
